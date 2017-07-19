@@ -1,0 +1,6 @@
+.vscode
+gameboyz.sock
+static/
+*.pyc
+__pycache__/
+.DS_Store
