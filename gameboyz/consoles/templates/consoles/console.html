@@ -1,0 +1,15 @@
+<html>
+    <h1>Console</h1>
+
+    <h2>{{ console.name }}</h2>
+
+
+    <h3>Games: </h3>
+    <ul>
+        {% for game in games %}
+        <li><a href="{% url 'game' console_slug=console.slug game_slug=game.slug %}">{{ game.name }}</a></li>
+        {% endfor %}
+    </ul>
+    
+
+</html>

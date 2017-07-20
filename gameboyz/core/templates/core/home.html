@@ -1,0 +1,9 @@
+<html>
+    <h1>Home</h1>
+
+    <ul>
+        {% for console in consoles %}
+        <li><a href="{% url 'console' console_slug=console.slug %}">{{ console }}</a></li>
+        {% endfor %}
+    </ul>
+</html>

@@ -1,0 +1,10 @@
+<html>
+    <h1>Game</h1>
+
+    <h1>{{ game.name }}</h1>
+    <p>{{ game.summary }}</p>
+
+    {% for keyword in game.keywords.all %}
+        {{keyword}}
+    {% endfor %}
+</html>
