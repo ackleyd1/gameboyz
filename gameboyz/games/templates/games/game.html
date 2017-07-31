@@ -1,10 +1,23 @@
-<html>
-    <h1>Game</h1>
+<!DOCTYPE html>
+{% extends 'core/base.html' %}
+{% load static %}
 
-    <h1>{{ game.name }}</h1>
-    <p>{{ game.summary }}</p>
+{% block title %}| {{ game.basegame.name }}{% endblock title %}
 
-    {% for keyword in game.keywords.all %}
-        {{keyword}}
+{% block head %}
+{% endblock head %}
+
+{% block content %}
+
+  <div class="container">
+    <br>
+    <h2>{{ game.basegame.name }}</h2>
+    {% for keyword in game.basegame.keywords.all %}
+      <span class="badge badge-pill badge-info">{{ keyword.name }}</span>
     {% endfor %}
-</html>
+    <p>{{ game.basegame.summary }}</p>
+
+    <p>Release Date: {{ game.basegame.first_release_date }}</p>
+
+  </div>
+{% endblock content %}

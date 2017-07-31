@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'gameboyz.consoles',
     'gameboyz.games',
     'gameboyz.accessories',
+    'gameboyz.sales',
     'rest_framework',
     'debug_toolbar',
     'django.contrib.admin',
@@ -134,3 +135,5 @@ USE_TZ = False
 
 STATIC_URL = '/gameboyz/static/'
 STATIC_ROOT = PROJECT_DIR.child('static')
+
+

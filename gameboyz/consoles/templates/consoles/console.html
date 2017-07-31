@@ -1,15 +1,63 @@
-<html>
-    <h1>Console</h1>
+<!DOCTYPE html>
+{% extends 'core/base.html' %}
+{% load static %}
 
-    <h2>{{ console.name }}</h2>
+{% block title %}| {{ console.name }}{% endblock title %}
 
+{% block head %}
+{% endblock head %}
 
-    <h3>Games: </h3>
-    <ul>
-        {% for game in games %}
-        <li><a href="{% url 'game' console_slug=console.slug game_slug=game.slug %}">{{ game.name }}</a></li>
-        {% endfor %}
-    </ul>
-    
+{% block content %}
 
-</html>
+  <div class="container-fluid">
+
+    <br>
+
+    <p>This is a list of unverified games. Click verify to change the asin or epid and change it to verified</p>
+
+    <table class="table table-striped">
+        <thead class="thead-inverse">
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Edition</th>
+                <th>Popularity</th>
+                <th>Rating</th>
+                <th>Price charting</th>
+                <th>ASIN</th>
+                <th>EPID</th>
+                <th>Verify Link</th>
+                <th>Delete Link</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for game in games %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td><a href="{% url 'game' console_slug=console.slug game_slug=game.slug %}">{{ game.basegame.name }}</a></td>
+                    <td>{{ game.edition }}</td>
+                    <td>{{ game.basegame.popularity }}</td>
+                    <td>{{ game.basegame.total_rating }}</td>
+                    <td><a href="https://www.pricecharting.com/search-products?q={{ game.google }}}&type=videogames&go=Go" target="_blank">Price charting</a></td>
+
+                    {% if game.asin %}
+                      <td><a href="https://amazon.com/dp/{{ game.asin }}" target="_blank">{{ game.asin }}</a></td>
+                    {% else %}
+                      <td><a href="https://google.com/search?q={{ game.google }}+{{ console.google }}+amazon" target="_blank">Search</a></td>
+                    {% endif %}
+
+                    {% if game.epid %}
+                      <td><a href="https://ebay.com/p/{{ game.epid }}" target="_blank">{{ game.epid }}</a></td>
+                    {% else %}
+                      <td><a href="https://google.com/search?q={{ game.google }}+{{ console.google }}+ebay" target="_blank">Search</a></td>
+                    {% endif %}
+                    
+                    <td><a href="{% url 'game_verify' console_slug=console.slug game_slug=game.slug %}">Verify</a></td>
+                    <td><a href="{% url 'game_delete' console_slug=console.slug game_slug=game.slug %}">Delete</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+  </div>
+{% endblock content %}

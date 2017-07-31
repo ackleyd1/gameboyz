@@ -14,6 +14,9 @@ class BaseConsole(models.Model):
     def __str__(self):
         return self.name
 
+    def google(self):
+        return self.name.replace(' ', '+')
+
 def slug_pre_save_receiver(sender, instance, *args, **kwargs):
     if not instance.slug and instance.name:
         instance.slug = slugify(instance.name)

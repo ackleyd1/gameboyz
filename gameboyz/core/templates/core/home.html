@@ -1,9 +1,22 @@
-<html>
-    <h1>Home</h1>
+<!DOCTYPE html>
+{% extends 'core/base.html' %}
+{% load static %}
 
-    <ul>
-        {% for console in consoles %}
-        <li><a href="{% url 'console' console_slug=console.slug %}">{{ console }}</a></li>
-        {% endfor %}
+{% block title %}| Home{% endblock title %}
+
+{% block head %}
+{% endblock head %}
+
+{% block content %}
+
+  <div class="container">
+
+    <br>
+
+    <ul class="list-group">
+      {% for console in consoles %}
+        <li class="list-group-item"><a href="{% url 'console' console_slug=console.slug %}">{{ console }}</a></li>
+      {% endfor %}
     </ul>
-</html>
+  </div>
+{% endblock content %}

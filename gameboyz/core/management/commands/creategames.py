@@ -20,9 +20,7 @@ class Command(BaseCommand):
 
             games = r.json()[0]['games']
 
-            print(games[:5])
-
-            for game_id in games[:5]:
+            for game_id in games:
                 if not BaseGame.objects.filter(igdb=game_id).exists():
                     BaseGame.objects.api_create(game_id)
                     print("%s game model created." % BaseGame.objects.get(igdb=game_id).name)

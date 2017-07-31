@@ -2,7 +2,7 @@ from django.db import models
 from django.db.models.signals import pre_save
 from django.utils.text import slugify
 
-from .managers import ThemeManager, KeywordManager, FranchiseManager, CollectionManager, BaseGameManager
+from .managers import ThemeManager, KeywordManager, FranchiseManager, CollectionManager, BaseGameManager, GameManager
 # Most of these models serve simply as a way of classifying games for suggesting to users
 
 class Theme(models.Model):
@@ -68,13 +68,11 @@ class Collection(models.Model):
 class BaseGame(models.Model):
     # Always has this info, slug is automatically generated
     name                = models.CharField(max_length=128)
-    slug                = models.SlugField(db_index=True, unique=True, max_length=128)
     url                 = models.URLField()
     popularity          = models.FloatField()
 
     # Some instances have these, images will be added in later
     first_release_date  = models.DateTimeField(null=True, blank=True)
-    image               = models.ImageField(null=True, blank=True)
     summary             = models.TextField(null=True, blank=True)
     total_rating        = models.FloatField(null=True, blank=True)
     total_rating_count  = models.PositiveIntegerField(null=True, blank=True)
@@ -86,11 +84,8 @@ class BaseGame(models.Model):
     themes              = models.ManyToManyField(Theme, blank=True)
     consoles            = models.ManyToManyField("consoles.BaseConsole")
 
-    # ids for igdb.com, pricecharting.com, amazon.com, ebay.com
+    # ids for igdb.com
     igdb                = models.PositiveIntegerField(db_index=True, null=True, blank=True, unique=True)
-    pcid                = models.PositiveIntegerField(null=True, blank=True, unique=True)
-    asin                = models.CharField(max_length=32, null=True, blank=True, unique=True)
-    epid                = models.CharField(max_length=32, null=True, blank=True, unique=True)
 
     # time information
     created             = models.DateTimeField(auto_now_add=True)
@@ -99,10 +94,33 @@ class BaseGame(models.Model):
     # set the manager for the model
     objects = BaseGameManager()
 
+    def getname(self):
+        return self.name
+
     def __str__(self):
         return self.name
 
-def create_slug(instance, sender, new_slug=None):
+class Game(models.Model):
+    basegame    = models.ForeignKey(BaseGame)
+    slug        = models.SlugField(db_index=True, max_length=128)
+    edition     = models.CharField(max_length=32, default="Original")
+    console     = models.ForeignKey("consoles.BaseConsole")
+    pcid        = models.PositiveIntegerField(null=True, blank=True, unique=True)
+    asin        = models.CharField(max_length=32, null=True, blank=True, unique=True)
+    epid        = models.CharField(max_length=32, null=True, blank=True, unique=True)
+    image       = models.ImageField(null=True, blank=True)
+    verified    = models.BooleanField(default=False)
+
+    objects = GameManager()
+
+    def __str__(self):
+        return self.basegame.name
+
+    def google(self):
+        return self.basegame.name.replace(' ', '+')
+
+
+def create_unique_slug(instance, sender, new_slug=None):
     slug = slugify(instance.name)
     if new_slug is not None:
         slug = new_slug
@@ -110,18 +128,24 @@ def create_slug(instance, sender, new_slug=None):
     exists = qs.exists()
     if exists:
         new_slug = "%s-%s" %(slug, qs.first().id)
-        return create_slug(instance, sender, new_slug=new_slug)
+        return create_unique_slug(instance, sender, new_slug=new_slug)
     return slug
         
-# uses django's slugify to create the slug from the title before the model is saved
-def slug_pre_save_receiver(sender, instance, *args, **kwargs):
+# uses django's slugify to create a unique slug from the name before the model is saved
+def unique_slug_pre_save_receiver(sender, instance, *args, **kwargs):
     if not instance.slug and instance.name:
-        instance.slug = create_slug(instance, sender)
+        instance.slug = create_unique_slug(instance, sender)
+
+# same thing but doesnt use the create_unique_slug function
+def slug_pre_save_receiver(sender, instance, *args, **kwargs):
+    if not instance.slug and instance.basegame.name:
+        instance.slug = slugify(instance.basegame.name)
+
 
 # connects to all models here so far
-pre_save.connect(slug_pre_save_receiver, sender=Theme)
-pre_save.connect(slug_pre_save_receiver, sender=Keyword)
-pre_save.connect(slug_pre_save_receiver, sender=Franchise)
-pre_save.connect(slug_pre_save_receiver, sender=Collection)
-pre_save.connect(slug_pre_save_receiver, sender=BaseGame)
+pre_save.connect(unique_slug_pre_save_receiver, sender=Theme)
+pre_save.connect(unique_slug_pre_save_receiver, sender=Keyword)
+pre_save.connect(unique_slug_pre_save_receiver, sender=Franchise)
+pre_save.connect(unique_slug_pre_save_receiver, sender=Collection)
+pre_save.connect(slug_pre_save_receiver, sender=Game)
 

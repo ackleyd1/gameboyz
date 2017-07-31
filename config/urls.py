@@ -19,13 +19,15 @@ from django.contrib import admin
 
 from gameboyz.core.views import HomeView
 from gameboyz.consoles.views import ConsoleView
-from gameboyz.games.views import GameView
+from gameboyz.games.views import GameView, GameVerifyView, GameDeleteView
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', HomeView.as_view(), name='home'),
     url(r'^(?P<console_slug>[-\w]+)/$', ConsoleView.as_view(), name='console'),
     url(r'^(?P<console_slug>[-\w]+)/(?P<game_slug>[-\w]+)/$', GameView.as_view(), name='game'),
+    url(r'^(?P<console_slug>[-\w]+)/(?P<game_slug>[-\w]+)/verify/$', GameVerifyView.as_view(), name='game_verify'),
+    url(r'^(?P<console_slug>[-\w]+)/(?P<game_slug>[-\w]+)/delete/$', GameDeleteView.as_view(), name='game_delete'),
 ]
 
 if settings.DEBUG:

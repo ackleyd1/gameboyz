@@ -111,7 +111,7 @@ class BaseGameManager(models.Manager):
             total_rating_count = game['total_rating_count']
 
 
-        from .models import Theme, Keyword, Franchise, Collection
+        from .models import Game, Theme, Keyword, Franchise, Collection
 
         # manage the franchise
 
@@ -186,6 +186,12 @@ class BaseGameManager(models.Manager):
 
         for igdb_collection_id in consoles:
             game.consoles.add(BaseConsole.objects.get(igdb=igdb_collection_id))
-        
 
-            
+        for console in game.consoles.all():
+            Game.objects.api_create(game, console)
+        
+class GameManager(models.Manager):
+    def api_create(self, basegame, console):
+        print(basegame)
+        print(console)
+        self.create(basegame=basegame, console=console)
