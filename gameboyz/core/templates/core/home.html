@@ -5,18 +5,28 @@
 {% block title %}| Home{% endblock title %}
 
 {% block head %}
+<link rel="stylesheet" type="text/css" href="{% static 'core/css/dashboard.css' %}">
 {% endblock head %}
 
 {% block content %}
 
-  <div class="container">
-
-    <br>
-
-    <ul class="list-group">
-      {% for console in consoles %}
-        <li class="list-group-item"><a href="{% url 'console' console_slug=console.slug %}">{{ console }}</a></li>
-      {% endfor %}
-    </ul>
+  <div class="container-fluid">
+    <div class="row">
+        <div class="sidebar col-2">
+          <div class="content">
+            <div class="list-group">
+              {% for console in consoles %}
+                <a href="{% url 'console' console_slug=console.slug %}" class="list-group-item list-group-item-action">{{ console.name }}</a>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        <div class="main col-10">
+          <div class="content">
+            <h1>Hello</h1>
+          </div>
+        </div>
+    </div>
   </div>
+
 {% endblock content %}

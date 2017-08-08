@@ -27,7 +27,7 @@ class GameVerifyView(UpdateView):
     context_object_name = 'game'
     
     def get_success_url(self):
-        return reverse_lazy('console', kwargs={'console_slug': self.kwargs.get('console_slug','')})
+        return reverse_lazy('console_verify', kwargs={'console_slug': self.kwargs.get('console_slug','')})
         
     def get_object(self):
         console = BaseConsole.objects.get(slug=self.kwargs.get("console_slug"))
@@ -39,7 +39,7 @@ class GameDeleteView(DeleteView):
     context_object_name = 'game'
 
     def get_success_url(self):
-        return reverse_lazy('console', kwargs={'console_slug': self.kwargs.get('console_slug','')})
+        return reverse_lazy('console_verify', kwargs={'console_slug': self.kwargs.get('console_slug','')})
         
     def get_object(self):
         console = BaseConsole.objects.get(slug=self.kwargs.get("console_slug"))

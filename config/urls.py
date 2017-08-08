@@ -1,33 +1,24 @@
-"""restembed URL Configuration
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/1.11/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  url(r'^$', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  url(r'^$', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.conf.urls import url, include
-    2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
-"""
 from django.conf import settings
 from django.conf.urls import url, include
 from django.contrib import admin
 
-from gameboyz.core.views import HomeView
-from gameboyz.consoles.views import ConsoleView
+from gameboyz.core.views import HomeView, VerifyView
+from gameboyz.consoles.views import ConsoleView, ConsoleVerifyView
 from gameboyz.games.views import GameView, GameVerifyView, GameDeleteView
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^accounts/', include('allauth.urls')),
+    
+    url(r'^verify/$', VerifyView.as_view(), name='verify'),
+    url(r'^verify/(?P<console_slug>[-\w]+)/$', ConsoleVerifyView.as_view(), name='console_verify'),
+    url(r'^verify/(?P<console_slug>[-\w]+)/(?P<game_slug>[-\w]+)/verify/$', GameVerifyView.as_view(), name='game_verify'),
+    url(r'^verify/(?P<console_slug>[-\w]+)/(?P<game_slug>[-\w]+)/delete/$', GameDeleteView.as_view(), name='game_delete'),
+    
     url(r'^$', HomeView.as_view(), name='home'),
     url(r'^(?P<console_slug>[-\w]+)/$', ConsoleView.as_view(), name='console'),
     url(r'^(?P<console_slug>[-\w]+)/(?P<game_slug>[-\w]+)/$', GameView.as_view(), name='game'),
-    url(r'^(?P<console_slug>[-\w]+)/(?P<game_slug>[-\w]+)/verify/$', GameVerifyView.as_view(), name='game_verify'),
-    url(r'^(?P<console_slug>[-\w]+)/(?P<game_slug>[-\w]+)/delete/$', GameDeleteView.as_view(), name='game_delete'),
+
 ]
 
 if settings.DEBUG:

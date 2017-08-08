@@ -100,15 +100,19 @@ class BaseGame(models.Model):
     def __str__(self):
         return self.name
 
+def image_path_rename(instance, filename):
+    ext = filename.split('.')[-1]
+    return '{}/{}.{}'.format(instance.basegame.slug, instance.slug, ext)
+
 class Game(models.Model):
     basegame    = models.ForeignKey(BaseGame)
     slug        = models.SlugField(db_index=True, max_length=128)
     edition     = models.CharField(max_length=32, default="Original")
     console     = models.ForeignKey("consoles.BaseConsole")
     pcid        = models.PositiveIntegerField(null=True, blank=True, unique=True)
-    asin        = models.CharField(max_length=32, null=True, blank=True, unique=True)
-    epid        = models.CharField(max_length=32, null=True, blank=True, unique=True)
-    image       = models.ImageField(null=True, blank=True)
+    asin        = models.CharField(max_length=32, null=True, blank=True)
+    epid        = models.CharField(max_length=32, null=True, blank=True)
+    image       = models.ImageField(upload_to=image_path_rename, null=True, blank=True)
     verified    = models.BooleanField(default=False)
 
     objects = GameManager()
@@ -137,9 +141,12 @@ def unique_slug_pre_save_receiver(sender, instance, *args, **kwargs):
         instance.slug = create_unique_slug(instance, sender)
 
 # same thing but doesnt use the create_unique_slug function
-def slug_pre_save_receiver(sender, instance, *args, **kwargs):
+def game_slug_pre_save_receiver(sender, instance, *args, **kwargs):
     if not instance.slug and instance.basegame.name:
-        instance.slug = slugify(instance.basegame.name)
+        new_slug = slugify(instance.basegame.name)
+        if sender.objects.filter(slug=new_slug, console=instance.console).exists():
+            new_slug = new_slug + '-' + slugify(instance.edition)
+        instance.slug = new_slug
 
 
 # connects to all models here so far
@@ -147,5 +154,5 @@ pre_save.connect(unique_slug_pre_save_receiver, sender=Theme)
 pre_save.connect(unique_slug_pre_save_receiver, sender=Keyword)
 pre_save.connect(unique_slug_pre_save_receiver, sender=Franchise)
 pre_save.connect(unique_slug_pre_save_receiver, sender=Collection)
-pre_save.connect(slug_pre_save_receiver, sender=Game)
+pre_save.connect(game_slug_pre_save_receiver, sender=Game)
 

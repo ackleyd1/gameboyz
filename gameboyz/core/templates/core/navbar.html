@@ -1,9 +1,26 @@
 <!DOCTYPE html>
 {% load static %}
 
-<nav class="navbar navbar-inverse bg-inverse">
+<nav class="navbar navbar-toggleable-md navbar-inverse" style="background-color: #20bfd2;">
+  <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
   <a class="navbar-brand" href="{% url 'home' %}">
-    <img src="{% static 'core/images/icon.png' %}" height="30" class="d-inline-block align-top img-responsive" alt="gameboyz icon">
-    Gameboyz
+    <img src="{% static 'core/images/logo_white.png' %}" height="40" class="d-inline-block align-top img-responsive" alt="gameboyz icon">
   </a>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a href="{% url 'home' %}" class="nav-link">Home</a>
+      </li>
+      <li class="nav-item">
+        <a href="{% url 'verify' %}" class="nav-link">Verify</a>
+      </li>
+      <li class="nav-item">
+        <a href="{% url 'admin:index' %}" class="nav-link">Admin</a>
+      </li>
+    </ul>
+  </div>
 </nav>

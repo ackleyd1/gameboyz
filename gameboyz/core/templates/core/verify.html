@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}| Home{% endblock title %}
+
+{% block head %}
+{% endblock head %}
+
+{% block content %}
+
+  <div class="container">
+
+    <br>
+
+    <div class="list-group">
+      {% for console in consoles %}
+        <a href="{% if not console.all_verified %}{% url 'console_verify' console_slug=console.slug %}{% endif %}" class="list-group-item list-group-item-action {% if console.all_verified %}disabled{% endif %}">{{ console.name }}</a>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock content %}

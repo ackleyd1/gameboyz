@@ -17,6 +17,11 @@ class BaseConsole(models.Model):
     def google(self):
         return self.name.replace(' ', '+')
 
+    def all_verified(self):
+        from gameboyz.games.models import Game
+        return Game.objects.filter(console=self.id, verified=False).count() == 0
+
+
 def slug_pre_save_receiver(sender, instance, *args, **kwargs):
     if not instance.slug and instance.name:
         instance.slug = slugify(instance.name)

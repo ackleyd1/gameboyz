@@ -13,7 +13,6 @@ CONSOLES = {
     'Super Nintendo Entertainment System (SNES)': 19,
     'Nintendo 64': 4,
     'Nintendo GameCube': 21,
-
     'Game Boy': 33,
     'Game Boy Color': 22,
     'Game Boy Advance': 24,
@@ -30,8 +29,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['dev.ravedave.co', 'www.dev.ravedave.co']
 
-INTERNAL_IPS = ['dev.ravedave.co', 'www.dev.ravedave.co']
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -42,13 +39,67 @@ INSTALLED_APPS = [
     'gameboyz.sales',
     'rest_framework',
     'debug_toolbar',
+
+    'django.contrib.humanize',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+
+    'crispy_forms',
+
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+LOGIN_REDIRECT_URL = '/gameboyz'
+ACCOUNT_LOGOUT_REDIRECT_URL = '/gameboyz'
+
+SITE_ID = 1
+
+ACCOUNT_AUTHENTICATION_METHOD = "username_email"
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 7
+
+SOCIALACCOUNT_PROVIDERS = {
+    'facebook': {
+        'METHOD': 'oauth2',
+        'SCOPE': ['email', 'public_profile', 'user_friends'],
+        'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
+        'INIT_PARAMS': {'cookie': True},
+        'FIELDS': [
+            'id',
+            'email',
+            'name',
+            'first_name',
+            'last_name',
+            'verified',
+            'locale',
+            'timezone',
+            'link',
+            'gender',
+            'updated_time',
+        ],
+        'EXCHANGE_TOKEN': True,
+        'LOCALE_FUNC': lambda request: 'en_US',
+        'VERIFIED_EMAIL': True,
+        'VERSION': 'v2.4',
+    }
+}
+
+EMAIL_HOST = "smtp.sendgrid.com"
+EMAIL_HOST_USER = "ackleyd1"
+EMAIL_MAIN = "ackleyd1@msu.edu"
+EMAIL_HOST_PASSWORD = os.environ["EMAIL_PASSWORD"]
+EMAIL_PORT = 587
+EMAIL_USER_TLS = False
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -96,6 +147,11 @@ DATABASES = {
     }
 }
 
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
@@ -136,4 +192,5 @@ USE_TZ = False
 STATIC_URL = '/gameboyz/static/'
 STATIC_ROOT = PROJECT_DIR.child('static')
 
-
+MEDIA_URL = '/gameboyz/media/'
+MEDIA_ROOT = PROJECT_DIR.child('media')

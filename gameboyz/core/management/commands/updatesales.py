@@ -18,11 +18,11 @@ class Command(BaseCommand):
         for game in Game.objects.filter(verified=True):
             try:
               api = Connection(appid=settings.EBAY_APP_ID, config_file=None)
-              response = api.execute('findCompletedItems', {'keywords': game.basegame.name, 'categoryId': '139973'})
+              response = api.execute('findCompletedItems', {'keywords': ' '.join(game.slug.split('-')), 'categoryId': '139973'})
               if response.reply.ack == 'Success' and 'item' in response.dict()['searchResult'].keys():
                   for item in response.dict()['searchResult']['item']:
                       if 'productId' in item.keys():
-                          if game.epid == item['productId']['value'] and not Sale.objects.filter(url=item['viewItemURL']).exists():
+                          if game.epid == item['productId']['value'] and not Sale.objects.filter(url=item['viewItemURL']).exists() and item['sellingStatus']['sellingState'] == "EndedWithSales" and item['sellingStatus']['convertedCurrentPrice']["_currencyId"] == "USD":
                               Sale.objects.create(
                                   title=item['title'],
                                   game=game,

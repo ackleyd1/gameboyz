@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 {% extends 'core/base.html' %}
 {% load static %}
+{% load humanize %}
 
 {% block title %}| {{ game.basegame.name }}{% endblock title %}
 
@@ -13,11 +14,35 @@
     <br>
     <h2>{{ game.basegame.name }}</h2>
     {% for keyword in game.basegame.keywords.all %}
-      <span class="badge badge-pill badge-info">{{ keyword.name }}</span>
+      <span class="badge badge-pill badge-info" style="background-color: #20bfd2">{{ keyword.name }}</span>
     {% endfor %}
     <p>{{ game.basegame.summary }}</p>
 
     <p>Release Date: {{ game.basegame.first_release_date }}</p>
+
+    <table class="table table-striped">
+        <thead style="background-color: #20bfd2">
+            <tr>
+                <th>#</th>
+                <th>Title</th>
+                <th>Condition</th>
+                <th>Date Sold</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sale in game.sale_set.all %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td><a href="{{ sale.url }}">{{ sale.title }}</a></td>
+                    <td>{{ sale.condition }}</td>
+                    <td>{{ sale.sold }}</td>
+                    <td style="color: green">${{ sale.price|floatformat:2|intcomma }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
 
   </div>
 {% endblock content %}
