@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+{% load crispy_forms_tags %}
 
 <nav class="navbar navbar-toggleable-md navbar-inverse" style="background-color: #20bfd2;">
   <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -13,14 +14,87 @@
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item">
+        <a href="{% url 'admin:index' %}" class="nav-link">Admin</a>
+      </li>
+      <li class="nav-item">
         <a href="{% url 'home' %}" class="nav-link">Home</a>
       </li>
       <li class="nav-item">
-        <a href="{% url 'verify' %}" class="nav-link">Verify</a>
-      </li>
-      <li class="nav-item">
-        <a href="{% url 'admin:index' %}" class="nav-link">Admin</a>
+        <a href="{% url 'games:list' %}" class="nav-link">Games</a>
       </li>
     </ul>
+    {% if search %}
+      <form class="form-inline my-2 my-lg-0" method="get" action=".">
+        {% csrf_token %}
+        <input class="form-control mr-sm-2" type="text" name="q" placeholder="Search">
+        <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
+      </form>
+      &nbsp;
+    {% endif %}
+    {% if user_enabled %}
+      {% if request.user.is_authenticated %}
+      <form class="form-inline my-2 my-lg-0" method="post" action="{% url 'account_logout' %}">
+        {% csrf_token %}
+        <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Logout</button>
+      </form>
+      {% else %}
+      <button type="button" class="btn btn-outline-primary my-2 my-sm-0" data-toggle="modal" data-target="#LoginModal">Login</button>
+      &nbsp;
+      <button type="button" class="btn btn-outline-primary my-2 my-sm-0" data-toggle="modal" data-target="#SignupModal">Signup</button>
+      {% endif %}
+    {% endif %}
+    
   </div>
 </nav>
+
+{% if user_enabled %}
+  {% if not request.user.is_authenticated %}
+  <div class="modal fade" id="LoginModal" tabindex="-1" role="dialog" aria-labelledby="LoginModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="LoginModalLabel">LOG IN</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form method="post" action="{% url 'account_login' %}">
+            {% csrf_token %}
+            {{ login_form|crispy }}
+            <input type="submit" value="Submit" class="btn btn-success">
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <a href="" class="btn btn-primary">Log In</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="SignupModal" tabindex="-1" role="dialog" aria-labelledby="SignupModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="SignupModalLabel">Signup</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form method="post" action="{% url 'account_signup' %}">
+            {% csrf_token %}
+            {{ signup_form|crispy }}
+            <input type="submit" value="Submit" class="btn btn-success">
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <a href="{% url 'account_signup' %}" class="btn btn-primary">Signup</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+{% endif %}

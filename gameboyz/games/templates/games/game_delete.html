@@ -1,20 +1,12 @@
-<!DOCTYPE>
-{% extends "core/base.html" %}
+{% extends 'core/base.html' %}
 {% load static %}
-
-{% block title %}
-  
-{% endblock title %}
-
-{% block head %}
-  
-{% endblock head %}
+{% load crispy_forms_tags %}
 
 {% block content %}
   <div class="container">
     <form action="" method="post">
       {% csrf_token %}
-      <p>Are you sure you want to delete "{{ game }}"?</p>
+      <p>Are you sure you want to delete "{{ object }}"?</p>
       <input type="submit" value="Confirm" />
     </form>
   </div>

@@ -1,36 +1,15 @@
 from django.db import models
 from django.db.models.signals import pre_save
 from django.utils.text import slugify
-
-from .managers import ThemeManager, KeywordManager, FranchiseManager, CollectionManager, BaseGameManager, GameManager
-# Most of these models serve simply as a way of classifying games for suggesting to users
-
-class Theme(models.Model):
-    name = models.TextField()
-    slug = models.SlugField(db_index=True, unique=True, max_length=128)
-    igdb = models.PositiveIntegerField(db_index=True, null=True, blank=True, unique=True)
-
-    # time information
-    created             = models.DateTimeField(auto_now_add=True)
-    updated             = models.DateTimeField(auto_now=True)
-
-    # set the manager for the model
-    objects = ThemeManager()
-
-    def __str__(self):
-        return self.name
+from django.urls import reverse
+from django.contrib.auth.models import User
 
 class Keyword(models.Model):
     name = models.TextField()
-    slug = models.SlugField(db_index=True, unique=True, max_length=128)
-    igdb = models.PositiveIntegerField(db_index=True, null=True, blank=True, unique=True)
 
     # time information
     created             = models.DateTimeField(auto_now_add=True)
     updated             = models.DateTimeField(auto_now=True)
-
-    # set the manager for the model
-    objects = KeywordManager()
 
     def __str__(self):
         return self.name
@@ -38,14 +17,10 @@ class Keyword(models.Model):
 class Franchise(models.Model):
     name = models.TextField()
     slug = models.SlugField(db_index=True, unique=True, max_length=128)
-    igdb = models.PositiveIntegerField(db_index=True, null=True, blank=True, unique=True)
 
     # time information
     created             = models.DateTimeField(auto_now_add=True)
     updated             = models.DateTimeField(auto_now=True)
-
-    # set the manager for the model
-    objects = FranchiseManager()
 
     def __str__(self):
         return self.name
@@ -53,49 +28,32 @@ class Franchise(models.Model):
 class Collection(models.Model):
     name = models.TextField()
     slug = models.SlugField(db_index=True, unique=True, max_length=128)
-    igdb = models.PositiveIntegerField(db_index=True, null=True, blank=True, unique=True)
 
     # time information
     created             = models.DateTimeField(auto_now_add=True)
     updated             = models.DateTimeField(auto_now=True)
-
-    # set the manager for the model
-    objects = CollectionManager()
 
     def __str__(self):
         return self.name
 
 class BaseGame(models.Model):
-    # Always has this info, slug is automatically generated
     name                = models.CharField(max_length=128)
     url                 = models.URLField()
     popularity          = models.FloatField()
-
-    # Some instances have these, images will be added in later
-    first_release_date  = models.DateTimeField(null=True, blank=True)
     summary             = models.TextField(null=True, blank=True)
     total_rating        = models.FloatField(null=True, blank=True)
     total_rating_count  = models.PositiveIntegerField(null=True, blank=True)
 
     # relationships each instance will have
-    franchise           = models.ForeignKey(Franchise,null=True, blank=True)
+    franchise           = models.ForeignKey(Franchise, null=True, blank=True, on_delete=models.SET_NULL)
     collections         = models.ManyToManyField(Collection, blank=True)
     keywords            = models.ManyToManyField(Keyword, blank=True)
-    themes              = models.ManyToManyField(Theme, blank=True)
-    consoles            = models.ManyToManyField("consoles.BaseConsole")
 
-    # ids for igdb.com
-    igdb                = models.PositiveIntegerField(db_index=True, null=True, blank=True, unique=True)
+
 
     # time information
     created             = models.DateTimeField(auto_now_add=True)
     updated             = models.DateTimeField(auto_now=True)
-
-    # set the manager for the model
-    objects = BaseGameManager()
-
-    def getname(self):
-        return self.name
 
     def __str__(self):
         return self.name
@@ -109,19 +67,34 @@ class Game(models.Model):
     slug        = models.SlugField(db_index=True, max_length=128)
     edition     = models.CharField(max_length=32, default="Original")
     console     = models.ForeignKey("consoles.BaseConsole")
-    pcid        = models.PositiveIntegerField(null=True, blank=True, unique=True)
-    asin        = models.CharField(max_length=32, null=True, blank=True)
-    epid        = models.CharField(max_length=32, null=True, blank=True)
+    asin        = models.CharField(max_length=32, null=True, blank=True, unique=True)
+    epid        = models.CharField(max_length=32, null=True, blank=True, unique=True)
     image       = models.ImageField(upload_to=image_path_rename, null=True, blank=True)
-    verified    = models.BooleanField(default=False)
-
-    objects = GameManager()
+    published   = models.BooleanField(default=False)
 
     def __str__(self):
         return self.basegame.name
 
-    def google(self):
-        return self.basegame.name.replace(' ', '+')
+    def get_absolute_url(self):
+        return reverse('games:detail', args=[str(self.id)])
+
+    def get_price(self):
+        if self.sale_set.count() == 0:
+            return None
+        else:
+            price = 0
+            for sale in self.sale_set.all():
+                price += sale.price
+            return price / self.sale_set.count()
+
+    def get_other_games(self):
+        return self.basegame.game_set.all().exclude(id=self.id)
+
+class GameListing(models.Model):
+    user = models.ForeignKey(User)
+    game = models.ForeignKey(Game)
+    price = models.DecimalField(max_digits=8, decimal_places=2)
+    condition = models.CharField(max_length=32)
 
 
 def create_unique_slug(instance, sender, new_slug=None):
@@ -150,7 +123,6 @@ def game_slug_pre_save_receiver(sender, instance, *args, **kwargs):
 
 
 # connects to all models here so far
-pre_save.connect(unique_slug_pre_save_receiver, sender=Theme)
 pre_save.connect(unique_slug_pre_save_receiver, sender=Keyword)
 pre_save.connect(unique_slug_pre_save_receiver, sender=Franchise)
 pre_save.connect(unique_slug_pre_save_receiver, sender=Collection)

@@ -15,14 +15,14 @@ class Command(BaseCommand):
     help = 'Updates ebay prices everyday'
 
     def handle(self, *args, **options):
-        for game in Game.objects.filter(verified=True):
+        for game in Game.objects.all():
             try:
               api = Connection(appid=settings.EBAY_APP_ID, config_file=None)
               response = api.execute('findCompletedItems', {'keywords': ' '.join(game.slug.split('-')), 'categoryId': '139973'})
               if response.reply.ack == 'Success' and 'item' in response.dict()['searchResult'].keys():
                   for item in response.dict()['searchResult']['item']:
                       if 'productId' in item.keys():
-                          if game.epid == item['productId']['value'] and not Sale.objects.filter(url=item['viewItemURL']).exists() and item['sellingStatus']['sellingState'] == "EndedWithSales" and item['sellingStatus']['convertedCurrentPrice']["_currencyId"] == "USD":
+                          if game.epid == item['productId']['value'] and not Sale.objects.filter(url=item['viewItemURL']).exists() and item['sellingStatus']['sellingState'] == "EndedWithSales" and item['sellingStatus']['convertedCurrentPrice']["_currencyId"] == "USD" and item['country'] == 'US':
                               Sale.objects.create(
                                   title=item['title'],
                                   game=game,

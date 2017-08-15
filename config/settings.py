@@ -6,8 +6,6 @@ ROOT_DIR = Path(__file__).ancestor(2)
 
 PROJECT_DIR = ROOT_DIR.child('gameboyz')
 
-DATA_UPLOAD_MAX_NUMBER_FIELDS = None
-
 CONSOLES = {
     'Nintendo Entertainment System (NES)': 18,
     'Super Nintendo Entertainment System (SNES)': 19,
@@ -18,12 +16,12 @@ CONSOLES = {
     'Game Boy Advance': 24,
 }
 
-SECRET_KEY = os.environ["SECRET_KEY"]
-PRICE_CHARTING_TOKEN = os.environ["PRICE_CHARTING_TOKEN"]
+SECRET_KEY = os.environ.get("SECRET_KEY", "")
+PRICE_CHARTING_TOKEN = os.environ.get("PRICE_CHARTING_TOKEN", "")
 
 IGDB_MASHAPE_URL = "https://igdbcom-internet-game-database-v1.p.mashape.com"
-X_MASHAPE_KEY = os.environ["X_MASHAPE_KEY"]
-EBAY_APP_ID = os.environ["EBAY_APP_ID"]
+X_MASHAPE_KEY = os.environ.get("X_MASHAPE_KEY", "")
+EBAY_APP_ID = os.environ.get("EBAY_APP_ID", "")
 
 DEBUG = True
 
@@ -38,7 +36,6 @@ INSTALLED_APPS = [
     'gameboyz.accessories',
     'gameboyz.sales',
     'rest_framework',
-    'debug_toolbar',
 
     'django.contrib.humanize',
     'django.contrib.admin',
@@ -49,13 +46,21 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
 
+    'paypal.standard.ipn',
+
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
 
     'crispy_forms',
+    'django_celery_beat',
+    'django_celery_results',
+    'debug_toolbar'
 
 ]
+
+PAYPAL_TEST = True
+
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
@@ -64,9 +69,14 @@ ACCOUNT_LOGOUT_REDIRECT_URL = '/gameboyz'
 
 SITE_ID = 1
 
-ACCOUNT_AUTHENTICATION_METHOD = "username_email"
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 7
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+
 
 SOCIALACCOUNT_PROVIDERS = {
     'facebook': {
@@ -94,10 +104,12 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
+DEFAULT_FROM_EMAIL = "ravedave@gameboyz.co"
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = "smtp.sendgrid.com"
 EMAIL_HOST_USER = "ackleyd1"
 EMAIL_MAIN = "ackleyd1@msu.edu"
-EMAIL_HOST_PASSWORD = os.environ["EMAIL_PASSWORD"]
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASSWORD", "")
 EMAIL_PORT = 587
 EMAIL_USER_TLS = False
 
@@ -141,7 +153,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'gameboyz',
         'USER': 'ackleyd1',
-        'PASSWORD': os.environ["POSTGRES_PASSWORD"],
+        'PASSWORD': os.environ.get("POSTGRES_PASSWORD", ""),
         'HOST': 'localhost',
         'PORT': '5432',
     }
@@ -189,8 +201,15 @@ USE_TZ = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
-STATIC_URL = '/gameboyz/static/'
+STATIC_URL = 'http://dev.ravedave.co/gameboyz/static/'
 STATIC_ROOT = PROJECT_DIR.child('static')
 
-MEDIA_URL = '/gameboyz/media/'
+MEDIA_URL = 'http://dev.ravedave.co/gameboyz/media/'
 MEDIA_ROOT = PROJECT_DIR.child('media')
+
+
+BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
