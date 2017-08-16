@@ -6,21 +6,7 @@ ROOT_DIR = Path(__file__).ancestor(2)
 
 PROJECT_DIR = ROOT_DIR.child('gameboyz')
 
-CONSOLES = {
-    'Nintendo Entertainment System (NES)': 18,
-    'Super Nintendo Entertainment System (SNES)': 19,
-    'Nintendo 64': 4,
-    'Nintendo GameCube': 21,
-    'Game Boy': 33,
-    'Game Boy Color': 22,
-    'Game Boy Advance': 24,
-}
-
 SECRET_KEY = os.environ.get("SECRET_KEY", "")
-PRICE_CHARTING_TOKEN = os.environ.get("PRICE_CHARTING_TOKEN", "")
-
-IGDB_MASHAPE_URL = "https://igdbcom-internet-game-database-v1.p.mashape.com"
-X_MASHAPE_KEY = os.environ.get("X_MASHAPE_KEY", "")
 EBAY_APP_ID = os.environ.get("EBAY_APP_ID", "")
 
 DEBUG = True
@@ -29,38 +15,38 @@ ALLOWED_HOSTS = ['dev.ravedave.co', 'www.dev.ravedave.co']
 
 # Application definition
 
-INSTALLED_APPS = [
+LOCAL_APPS = [
     'gameboyz.core',
     'gameboyz.consoles',
     'gameboyz.games',
     'gameboyz.accessories',
     'gameboyz.sales',
-    'rest_framework',
+]
 
+DJANGO_APPS = [
     'django.contrib.humanize',
     'django.contrib.admin',
+    'django.contrib.admindocs',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+]
 
-    'paypal.standard.ipn',
-
+THIRD_PARTY_APPS = [
+    'rest_framework',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-
     'crispy_forms',
     'django_celery_beat',
     'django_celery_results',
     'debug_toolbar'
-
 ]
 
-PAYPAL_TEST = True
-
+INSTALLED_APPS = LOCAL_APPS + DJANGO_APPS + THIRD_PARTY_APPS
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
@@ -76,33 +62,6 @@ ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 7
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
-
-
-SOCIALACCOUNT_PROVIDERS = {
-    'facebook': {
-        'METHOD': 'oauth2',
-        'SCOPE': ['email', 'public_profile', 'user_friends'],
-        'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
-        'INIT_PARAMS': {'cookie': True},
-        'FIELDS': [
-            'id',
-            'email',
-            'name',
-            'first_name',
-            'last_name',
-            'verified',
-            'locale',
-            'timezone',
-            'link',
-            'gender',
-            'updated_time',
-        ],
-        'EXCHANGE_TOKEN': True,
-        'LOCALE_FUNC': lambda request: 'en_US',
-        'VERIFIED_EMAIL': True,
-        'VERSION': 'v2.4',
-    }
-}
 
 DEFAULT_FROM_EMAIL = "ravedave@gameboyz.co"
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

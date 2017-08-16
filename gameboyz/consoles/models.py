@@ -2,25 +2,14 @@ from django.db import models
 from django.db.models.signals import pre_save
 from django.utils.text import slugify
 
-from .managers import BaseConsoleManager
-
+# Base Console Model (aka a platform)
 class BaseConsole(models.Model):
     name    = models.CharField(max_length=128)
     slug    = models.SlugField(db_index=True, unique=True, max_length=128)
     image   = models.ImageField(null=True, blank=True)
-    igdb    = models.PositiveIntegerField(db_index=True, null=True, blank=True, unique=True)
-    objects = BaseConsoleManager()
 
     def __str__(self):
         return self.name
-
-    def google(self):
-        return self.name.replace(' ', '+')
-
-    def all_verified(self):
-        from gameboyz.games.models import Game
-        return Game.objects.filter(console=self.id, verified=False).count() == 0
-
 
 def slug_pre_save_receiver(sender, instance, *args, **kwargs):
     if not instance.slug and instance.name:
@@ -28,5 +17,4 @@ def slug_pre_save_receiver(sender, instance, *args, **kwargs):
 
 pre_save.connect(slug_pre_save_receiver, sender=BaseConsole)
 
-
-        
+# Console Model

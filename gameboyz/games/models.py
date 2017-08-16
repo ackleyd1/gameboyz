@@ -4,39 +4,31 @@ from django.utils.text import slugify
 from django.urls import reverse
 from django.contrib.auth.models import User
 
-class Keyword(models.Model):
-    name = models.TextField()
+from gameboyz.core.models import TimeStampedModel
 
-    # time information
-    created             = models.DateTimeField(auto_now_add=True)
-    updated             = models.DateTimeField(auto_now=True)
+from .utils import image_path_rename
 
-    def __str__(self):
-        return self.name
-
-class Franchise(models.Model):
-    name = models.TextField()
-    slug = models.SlugField(db_index=True, unique=True, max_length=128)
-
-    # time information
-    created             = models.DateTimeField(auto_now_add=True)
-    updated             = models.DateTimeField(auto_now=True)
+class Keyword(TimeStampedModel):
+    name = models.TextField()    
 
     def __str__(self):
         return self.name
 
-class Collection(models.Model):
+class Franchise(TimeStampedModel):
     name = models.TextField()
     slug = models.SlugField(db_index=True, unique=True, max_length=128)
 
-    # time information
-    created             = models.DateTimeField(auto_now_add=True)
-    updated             = models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return self.name
+
+class Collection(TimeStampedModel):
+    name = models.TextField()
+    slug = models.SlugField(db_index=True, unique=True, max_length=128)
 
     def __str__(self):
         return self.name
 
-class BaseGame(models.Model):
+class BaseGame(TimeStampedModel):
     name                = models.CharField(max_length=128)
     url                 = models.URLField()
     popularity          = models.FloatField()
@@ -49,20 +41,10 @@ class BaseGame(models.Model):
     collections         = models.ManyToManyField(Collection, blank=True)
     keywords            = models.ManyToManyField(Keyword, blank=True)
 
-
-
-    # time information
-    created             = models.DateTimeField(auto_now_add=True)
-    updated             = models.DateTimeField(auto_now=True)
-
     def __str__(self):
         return self.name
 
-def image_path_rename(instance, filename):
-    ext = filename.split('.')[-1]
-    return '{}/{}.{}'.format(instance.basegame.slug, instance.slug, ext)
-
-class Game(models.Model):
+class Game(TimeStampedModel):
     basegame    = models.ForeignKey(BaseGame)
     slug        = models.SlugField(db_index=True, max_length=128)
     edition     = models.CharField(max_length=32, default="Original")
@@ -90,7 +72,7 @@ class Game(models.Model):
     def get_other_games(self):
         return self.basegame.game_set.all().exclude(id=self.id)
 
-class GameListing(models.Model):
+class GameListing(TimeStampedModel):
     user = models.ForeignKey(User)
     game = models.ForeignKey(Game)
     price = models.DecimalField(max_digits=8, decimal_places=2)

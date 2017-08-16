@@ -1,6 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+class TimeStampedModel(models.Model):
+    created             = models.DateTimeField(auto_now_add=True)
+    updated             = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
+
 # Payment level's that are associated with the user
 class Level(models.Model):
     name = models.CharField(max_length=32)

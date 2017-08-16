@@ -1,7 +1,6 @@
 from django import forms
 from django.apps import apps
 
-
 Game = apps.get_model('games', 'Game')
 
 from crispy_forms.helper import FormHelper
@@ -15,4 +14,4 @@ class GameUpdateForm(forms.ModelForm):
 
     class Meta:
         model = Game
-        fields = '__all__'
+        fields = ['basegame', 'slug', 'edition', 'console', 'asin', 'epid', 'image', 'published']

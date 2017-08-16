@@ -1,11 +1,12 @@
 from django.contrib import admin
 
 from gameboyz.sales.models import Sale
+
 from .models import BaseGame, Game, Keyword, Franchise, Collection
 
 class SaleInline(admin.StackedInline):
     model = Sale
-    extra = 1
+    extra = 0
 
 class GameAdmin(admin.ModelAdmin):
     inlines = [SaleInline,]

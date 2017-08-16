@@ -1,0 +1,36 @@
+============
+Installation
+============
+
+To get started, first create a virtualenv to install the project's dependencies.
+
+I suggest using virtualenv with the virtualenvwrapper. Here is a link that will guide you to configure this correctly. `virtualenvwrapper`_
+
+.. _virtualenvwrapper: https://virtualenvwrapper.readthedocs.io/en/latest/
+
+Then, clone the `repo`_ inside a folder where you keep your django projects. 
+
+.. _repo: https://github.com/ackleyd1/gameboyz
+
+With your virtualenv activated, run in the root of the project:
+
+.. code-block:: bash
+    :linenos:
+
+    pip install -r requirements.txt
+
+This will install the required dependencies. 
+
+Then, configure your settings, environments variables and database to your specifications.
+
+Finally, run the following 
+
+.. code-block:: bash
+    :linenos:
+
+    python manage.py makemigrations
+    python manage.py migrate
+    python manage.py collectstatic
+    python manage.py runserver
+
+The django project should be running at http://localhost:8000/
