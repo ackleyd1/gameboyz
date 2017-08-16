@@ -1,7 +1,4 @@
 from __future__ import absolute_import
-
-from celery import shared_task
-
 import json
 import dateutil.parser
 
@@ -10,12 +7,16 @@ from django.conf import settings
 from gameboyz.games.models import Game
 from gameboyz.sales.models import Sale
 
+from celery import shared_task
 from ebaysdk.exception import ConnectionError
 from ebaysdk.finding import Connection
 
 @shared_task(name='updatesales')
 def updatesales():
-    for game in Game.objects.all()[:5]:
+    """
+    Celery task that loops through our :model:`gameboyz.games.Game` and uses the ebay finding API: https://developer.ebay.com/devzone/finding/callref/findCompletedItems.html and the ebay python SDK: https://github.com/timotheus/ebaysdk-python/ to create sales with :model:`gameboyz.sales.Sale`
+    """
+    for game in Game.objects.all():
         try:
             api = Connection(appid=settings.EBAY_APP_ID, config_file=None)
             response = api.execute('findCompletedItems', {'keywords': ' '.join(game.slug.split('-')), 'categoryId': '139973'})
@@ -33,6 +34,5 @@ def updatesales():
                                 price=item['sellingStatus']['convertedCurrentPrice']['value'],
                                 sold=dateutil.parser.parse(item['listingInfo']['endTime'])
                             )
-
         except ConnectionError as e:
             continue
