@@ -1,40 +1,30 @@
 {% extends "core/base.html" %}
 {% load static %}
 
-{% block title %}| Games{% endblock title %}
+{% block title %}| {{ basegame.name }}{% endblock title %}
 
 {% block content %}
+  <br>
+
   <div class="container">
+    <h1>{{ basegame.name }}</h1>
+    <p>{{ basegame.summary }}</p>
+    <p>{{ basegame.popularity }}</p>
 
-    <br>
+    {% for keyword in basegame.keywords.all %}
+    <p>{{ keyword }}</p>
+    {% endfor %}
 
-    {% if is_paginated %}
-    <nav aria-label="Page navigation example">
-      <ul class="pagination justify-content-center">
-        {% if page_obj.has_previous %}
-          <li class="page-item">
-            <a class="page-link" href="?q={{ request.GET.q }}&page={{ page_obj.previous_page_number }}" tabindex="-1">Previous</a>
-          </li>
-        {% else %}
-          <li class="page-item disabled">
-            <a class="page-link" href="" tabindex="-1">Previous</a>
-          </li>
-        {% endif %}
-        {% if page_obj.has_next %}
-          <li class="page-item">
-            <a class="page-link" href="?q={{ request.GET.q }}&page={{ page_obj.next_page_number }}">Next</a>
-          </li>
-        {% else %}
-          <li class="page-item disabled">
-            <a class="page-link" href="">Next</a>
-          </li>
-        {% endif %}
-      </ul>
-    </nav>
-    {% endif %}
+    {% for collection in basegame.collections.all %}
+    <p>{{ collection }}</p>
+    {% endfor %}
+
+    <p>{{ basegame.franchise }}</p>
+    <p>{{ basegame.total_rating }}</p>
+    <p>{{ basegame.total_rating_count }}</p>
 
     <div class="row card-deck">
-      {% for game in games %}
+      {% for game in basegame.game_set.all %}
         <div class="col-6 col-sm-4 col-lg-3" style="padding: 1.5rem">
           <div class="card">
             {% if game.image %}
@@ -53,5 +43,12 @@
         </div>
       {% endfor %}
     </div>
+
+    {% if request.user.is_superuser %}
+      <p>
+        <a href="{% url 'basegame-update' pk=basegame.pk %}">Edit</a>
+        <a href="{% url 'basegame-delete' pk=basegame.pk %}">Delete</a>
+      </p>
+    {% endif %}
   </div>
 {% endblock content %}

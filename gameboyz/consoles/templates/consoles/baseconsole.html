@@ -1,0 +1,36 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}| {{ baseconsole.name }}{% endblock title %}
+
+{% block content %}
+  <div class="container">
+    <h1>{{ baseconsole.name }}</h1>
+
+    {% if request.user.is_superuser %}
+      <p><a href="{% url 'console-create' pk=baseconsole.pk %}">Create a new Console</a></p>
+    {% endif %}
+
+    <div class="row card-deck">
+      {% for console in baseconsole.console_set.all %}
+        <div class="col-6 col-sm-4 col-lg-3" style="padding: 1.5rem">
+          <div class="card">
+            {% if console.image %}
+              <img class="card-img-top" style="width: 100%" src="{{ console.image.url }}" alt="{{ baseconsole.name }}">
+            {% else %}
+              <img class="card-img-top" style="width: 100%" src="{% static 'core/images/default.png' %}" alt="Default image">
+            {% endif %}
+            <div class="card-block">
+              <h4 class="card-title text-center">{{ console.edition }}</h4>
+              <p class="card-text hidden-md-down"></p>
+            </div>
+            <div class="card-footer text-center">
+              <a href="{{ console.get_absolute_url }}" class="card-link">View More</a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+  </div>
+{% endblock content %}

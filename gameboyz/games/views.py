@@ -1,42 +1,23 @@
 from django.shortcuts import render
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse_lazy
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import UpdateView, DeleteView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.db.models import Count
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.contrib.auth.models import User
 
+from gameboyz.core.mixins import UserMixin
 
-from gameboyz.core.views import NameSearchMixin, UserMixin
+from .models import BaseGame, Game, GameListing
+from .forms import BaseGameUpdateForm, GameUpdateForm
 
-from .models import Game
-from .forms import GameUpdateForm
-
-# class GameListView(UserMixin, NameSearchMixin, ListView):
-#     model = Game
-#     template_name = 'games/game_list.html'
-#     context_object_name = 'games'
-
-#     def get_queryset(self, *args, **kwargs):
-#         queryset = super(GameListView, self).get_queryset(*args, **kwargs)
-#         queryset = queryset.annotate(sale_count=Count('sale')).order_by('-sale_count')
-#         return queryset
-
-def game_list(request):
-    games = Game.objects.all().annotate(sale_count=Count('sale')).order_by('-sale_count')
-    paginator = Paginator(games, 20)
-
-    page = request.GET.get('page')
-    try:
-        games = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        games = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        games = paginator.page(paginator.num_pages)
-
-    return render(request, 'games/game_list.html', {'games': games})
+class GameListView(UserMixin, ListView):
+    model = Game
+    template_name = 'games/game_list.html'
+    context_object_name = 'games'
+    paginate_by = 20
+    queryset = Game.objects.all().annotate(sale_count=Count('sale')).order_by('-sale_count')
 
 class GameDetailView(UserMixin, DetailView):
     model = Game
@@ -45,16 +26,42 @@ class GameDetailView(UserMixin, DetailView):
 
 class GameUpdateView(UpdateView):
     model = Game
-    template_name = 'games/game_update.html'
+    template_name = 'core/update.html'
     form_class = GameUpdateForm
-    
-    def get_success_url(self, *args, **kwargs):
-        game = self.get_object(*args, **kwargs)
-        return game.get_absolute_url()
 
 class GameDeleteView(DeleteView):
     model = Game
-    template_name = 'games/game_delete.html'
-    
-    def get_success_url(self, *args, **kwargs):
-        return reverse('games:list')
+    template_name = 'core/delete.html'
+    success_url = reverse_lazy('games:list')
+
+class BaseGameListView(UserMixin, ListView):
+    model = BaseGame
+    template_name = 'games/basegame_list.html'
+    context_object_name = 'basegames'
+    paginate_by = 20
+    queryset = BaseGame.objects.all().annotate(sale_count=Count('game__sale')).order_by('-sale_count')
+
+class BaseGameDetailView(UserMixin, DetailView):
+    model = BaseGame
+    template_name = 'games/basegame.html'
+    context_object_name = 'basegame'
+
+class BaseGameUpdateView(UpdateView):
+    model = BaseGame
+    template_name = 'core/update.html'
+    form_class = BaseGameUpdateForm
+
+class BaseGameDeleteView(DeleteView):
+    model = BaseGame
+    template_name = 'core/delete.html'
+    success_url = reverse_lazy('basegame-list')
+
+class GameListingCreateView(CreateView):
+    model = GameListing
+    template_name = 'core/create.html'
+    fields = ["price", "condition"]
+
+    def form_valid(self, form):
+        form.instance.user = User.objects.get(id=self.request.user.id)
+        form.instance.game = Game.objects.get(id=self.kwargs.get('pk'))
+        return super(GameListingCreateView, self).form_valid(form)

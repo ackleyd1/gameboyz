@@ -1,7 +1,7 @@
 {% extends "core/base.html" %}
 {% load static %}
 
-{% block title %}| Games{% endblock title %}
+{% block title %}| Consoles{% endblock title %}
 
 {% block content %}
   <div class="container">
@@ -34,20 +34,20 @@
     {% endif %}
 
     <div class="row card-deck">
-      {% for game in games %}
+      {% for console in consoles %}
         <div class="col-6 col-sm-4 col-lg-3" style="padding: 1.5rem">
           <div class="card">
-            {% if game.image %}
-              <img class="card-img-top" style="width: 100%" src="{{ game.image.url }}" alt="{{ game.basegame.name }}">
+            {% if console.image %}
+              <img class="card-img-top" style="width: 100%" src="{{ console.image.url }}" alt="{{ console.baseconsole.name }}">
             {% else %}
               <img class="card-img-top" style="width: 100%" src="{% static 'core/images/default.png' %}" alt="Default image">
             {% endif %}
             <div class="card-block">
-              <h4 class="card-title text-center">{{ game.basegame.name }}</h4>
-              <p class="card-text hidden-md-down">{{ game.console }}</p>
+              <h4 class="card-title text-center">{{ console.baseconsole.name }} - {{ console.edition }}</h4>
+              <p class="card-text hidden-md-down"></p>
             </div>
             <div class="card-footer text-center">
-              <a href="{{ game.get_absolute_url }}" class="card-link">View More</a>
+              <a href="{{ console.get_absolute_url }}" class="card-link">View More</a>
             </div>
           </div>
         </div>

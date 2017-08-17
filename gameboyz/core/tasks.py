@@ -14,7 +14,7 @@ from ebaysdk.finding import Connection
 @shared_task(name='updatesales')
 def updatesales():
     """
-    Celery task that loops through our :model:`gameboyz.games.Game` and uses the ebay finding API: https://developer.ebay.com/devzone/finding/callref/findCompletedItems.html and the ebay python SDK: https://github.com/timotheus/ebaysdk-python/ to create sales with :model:`gameboyz.sales.Sale`
+    Celery task that loops through our :model:`games.Game` and uses the ebay finding API: https://developer.ebay.com/devzone/finding/callref/findCompletedItems.html and the ebay python SDK: https://github.com/timotheus/ebaysdk-python/ to create sales with :model:`sales.Sale`
     """
     for game in Game.objects.all():
         try:

@@ -14,18 +14,23 @@
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item">
-        <a href="{% url 'admin:index' %}" class="nav-link">Admin</a>
+        <a href="{% url 'home' %}" class="nav-link">Home</a>
       </li>
       <li class="nav-item">
-        <a href="{% url 'home' %}" class="nav-link">Home</a>
+        <a href="{% url 'basegame-list' %}" class="nav-link">BaseGames</a>
       </li>
       <li class="nav-item">
         <a href="{% url 'games:list' %}" class="nav-link">Games</a>
       </li>
+      <li class="nav-item">
+        <a href="{% url 'baseconsole-list' %}" class="nav-link">BaseConsoles</a>
+      </li>
+      <li class="nav-item">
+        <a href="{% url 'consoles:list' %}" class="nav-link">Consoles</a>
+      </li>
     </ul>
     {% if search %}
       <form class="form-inline my-2 my-lg-0" method="get" action=".">
-        {% csrf_token %}
         <input class="form-control mr-sm-2" type="text" name="q" placeholder="Search">
         <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
       </form>
@@ -65,10 +70,6 @@
             <input type="submit" value="Submit" class="btn btn-success">
           </form>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <a href="" class="btn btn-primary">Log In</a>
-        </div>
       </div>
     </div>
   </div>
@@ -88,10 +89,6 @@
             {{ signup_form|crispy }}
             <input type="submit" value="Submit" class="btn btn-success">
           </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <a href="{% url 'account_signup' %}" class="btn btn-primary">Signup</a>
         </div>
       </div>
     </div>

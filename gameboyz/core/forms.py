@@ -1,6 +1,5 @@
 from django import forms
 from django.apps import apps
-from django.urls import reverse
 
 from allauth.account.forms import LoginForm, SignupForm
 from crispy_forms.helper import FormHelper

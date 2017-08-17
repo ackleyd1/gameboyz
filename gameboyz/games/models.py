@@ -44,6 +44,9 @@ class BaseGame(TimeStampedModel):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return reverse('basegame-detail', args=[str(self.id)])
+
 class Game(TimeStampedModel):
     basegame    = models.ForeignKey(BaseGame)
     slug        = models.SlugField(db_index=True, max_length=128)
@@ -77,6 +80,12 @@ class GameListing(TimeStampedModel):
     game = models.ForeignKey(Game)
     price = models.DecimalField(max_digits=8, decimal_places=2)
     condition = models.CharField(max_length=32)
+
+    def __str__(self):
+        return "%s-%s" %(self.game.basegame.name, self.condition)
+
+    def get_absolute_url(self):
+        return reverse('games:detail', args=[str(self.game.id)])
 
 
 def create_unique_slug(instance, sender, new_slug=None):

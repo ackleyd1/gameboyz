@@ -6,3 +6,4 @@ __pycache__/
 .DS_Store
 celerybeat-schedule
 logs/
+gameboyz/core/celerybeat.pid

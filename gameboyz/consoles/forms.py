@@ -1,28 +1,28 @@
 from django import forms
 from django.apps import apps
 
-Game = apps.get_model('games', 'Game')
-BaseGame = apps.get_model('games', 'BaseGame')
-
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 
-class GameUpdateForm(forms.ModelForm):
+BaseConsole = apps.get_model('consoles', 'BaseConsole')
+Console = apps.get_model('consoles', 'Console')
+
+class BaseConsoleUpdateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
-        super(GameUpdateForm, self).__init__(*args, **kwargs)
+        super(BaseConsoleUpdateForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.helper.layout.append(Submit('save', 'Save'))
 
     class Meta:
-        model = Game
-        fields = ['basegame', 'slug', 'edition', 'console', 'asin', 'epid', 'image', 'published']
+        model = BaseConsole
+        fields = '__all__'
 
-class BaseGameUpdateForm(forms.ModelForm):
+class ConsoleUpdateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
-        super(BaseGameUpdateForm, self).__init__(*args, **kwargs)
+        super(ConsoleUpdateForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.helper.layout.append(Submit('save', 'Save'))
 
     class Meta:
-        model = BaseGame
+        model = Console
         fields = '__all__'
