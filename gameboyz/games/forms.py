@@ -26,3 +26,7 @@ class BaseGameUpdateForm(forms.ModelForm):
     class Meta:
         model = BaseGame
         fields = '__all__'
+
+class BraintreeSaleForm(forms.Form):
+    amount = forms.DecimalField(decimal_places=2, max_digits=20)
+    payment_method_nonce = forms.CharField()

@@ -1,18 +1,14 @@
 from django.shortcuts import render
-from django.core.urlresolvers import reverse
-from django.views import View
-from django.views.generic.list import ListView
+from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import UpdateView, DeleteView
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.contrib.auth.models import User
 
-from gameboyz.consoles.models import BaseConsole
-from gameboyz.games.models import Game
+from gameboyz.games.models import GameListing
 
 from .mixins import UserMixin
 from .forms import CrispyLoginForm, CrispySignupForm
 
-class HomeView(View):
+class HomeView(UserMixin, TemplateView):
     """
     HomeView for the website.
     **Template:**
@@ -20,13 +16,15 @@ class HomeView(View):
     """
     template_name = 'core/home.html'
 
-    def get(self, request, *args, **kwargs):
-        """Handles the HomeView's get request."""
-        return render(request, self.template_name, self.get_context_data(*args, **kwargs))
+class UserCollectionView(UserMixin, DetailView):
+    """
+    UserCollectionView to view users listed games, consoles, and accessories
+    **Template**
+    :template:'core/collection.html'
+    """
+    model = User
+    template_name = 'core/collection.html'
+    context_object_name = 'user'
+    slug_field = 'username'
+    slug_url_kwarg = 'username'
 
-    def get_context_data(self, *args, **kwargs):
-        """Implements the UserMixin context data."""
-        context = {'login_form': CrispyLoginForm()}
-        context['signup_form'] = CrispySignupForm()
-        context['user_enabled'] = True
-        return context

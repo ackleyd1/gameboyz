@@ -60,6 +60,6 @@ Repo: `Sales`_
 
 This application will handle tracking the sales of the Accessory, Console, and Game models.
 
-The Sale model represents a individual sale from one user to another. It relates back to a specific Accessory, Console, or Game. It will also contain the condition of the item, the price it sold for, and other information if supplied. They can be either from eBay, Amazon, or Gameboyz. (Note that any Amazon sales tracked cannot be verified as sold but rather assumed)
+The GameSale model represents a individual sale from one user to another of a game. It relates back to a Game. It will also contain the condition of the item, the price it sold for, and other information if supplied. They can be either from eBay, Amazon, or Gameboyz. (Note that any Amazon sales tracked cannot be verified as sold but rather assumed)
 
 When a user sells a game on this site, a signal will be sent to create a sale from the respective Listing model.

@@ -28,6 +28,11 @@
       <li class="nav-item">
         <a href="{% url 'consoles:list' %}" class="nav-link">Consoles</a>
       </li>
+      {% if request.user.is_authenticated %}
+      <li class="nav-item">
+        <a href="{% url 'collection' username=request.user.username%}" class="nav-link">Profile</a>
+      </li>
+      {% endif %}
     </ul>
     {% if search %}
       <form class="form-inline my-2 my-lg-0" method="get" action=".">

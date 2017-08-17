@@ -33,6 +33,14 @@
     </nav>
     {% endif %}
 
+    {% if request.GET.q %}
+    <div class="row">
+      <div class="col-4 offset-4 text-center">
+        <a class="btn btn-primary" href="{% url 'games:list' %}">Clear query</a>
+      </div>
+    </div>
+    {% endif %}
+
     <div class="row card-deck">
       {% for game in games %}
         <div class="col-6 col-sm-4 col-lg-3" style="padding: 1.5rem">

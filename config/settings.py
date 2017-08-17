@@ -1,13 +1,22 @@
 import os
 
 from unipath import Path
+from django.core.exceptions import ImproperlyConfigured
+
+def get_env_variable(var_name):
+    """Get the environment variable or return exception"""
+    try:
+        return os.environ[var_name]
+    except KeyError:
+        error_msg = 'Set the {} environment variable'.format(var_name)
+        raise ImproperlyConfigured(error_msg)
 
 ROOT_DIR = Path(__file__).ancestor(2)
 
 PROJECT_DIR = ROOT_DIR.child('gameboyz')
 
-SECRET_KEY = os.environ.get("SECRET_KEY", "")
-EBAY_APP_ID = os.environ.get("EBAY_APP_ID", "")
+SECRET_KEY = get_env_variable("SECRET_KEY")
+EBAY_APP_ID = get_env_variable("EBAY_APP_ID",)
 
 DEBUG = True
 
@@ -70,7 +79,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = "smtp.sendgrid.com"
 EMAIL_HOST_USER = "ackleyd1"
 EMAIL_MAIN = "ackleyd1@msu.edu"
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASSWORD", "")
+EMAIL_HOST_PASSWORD = get_env_variable("EMAIL_PASSWORD")
 EMAIL_PORT = 587
 EMAIL_USER_TLS = False
 
@@ -114,7 +123,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'gameboyz',
         'USER': 'ackleyd1',
-        'PASSWORD': os.environ.get("POSTGRES_PASSWORD", ""),
+        'PASSWORD': get_env_variable("POSTGRES_PASSWORD"),
         'HOST': 'localhost',
         'PORT': '5432',
     }
@@ -174,3 +183,7 @@ CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+
+BRAINTREE_MERCHANT_ID = get_env_variable("BRAINTREE_MERCHANT_ID")
+BRAINTREE_PUBLIC_KEY = get_env_variable("BRAINTREE_PUBLIC_KEY")
+BRAINTREE_PRIVATE_KEY = get_env_variable("BRAINTREE_PRIVATE_KEY")

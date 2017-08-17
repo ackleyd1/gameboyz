@@ -95,7 +95,7 @@
               <p class="card-text hidden-md-down">{{ listing.user }} | {{ listing.condition }}</p>
             </div>
             <div class="card-footer text-center">
-              <a href="" class="card-link">View More</a>
+              <a href="{{ listing.get_absolute_url }}" class="card-link">View More</a>
             </div>
           </div>
         </div>
@@ -116,7 +116,7 @@
     <br>
 
     <div class="row">
-      {% if game.sale_set.count == 0 %}
+      {% if game.gamesale_set.count == 0 %}
         <h1>There is no sales data recorded for this game</h1>
       {% else %}
         <table class="table table-striped">
@@ -130,7 +130,7 @@
               </tr>
           </thead>
           <tbody>
-              {% for sale in game.sale_set.all %}
+              {% for sale in game.gamesale_set.all %}
                   <tr>
                       <th scope="row">{{ forloop.counter }}</th>
                       <td><a href="{{ sale.url }}">{{ sale.title }}</a></td>

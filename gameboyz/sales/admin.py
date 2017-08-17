@@ -1,5 +1,5 @@
 from django.contrib import admin
 
-from gameboyz.sales.models import Sale
+from gameboyz.sales.models import GameSale
 
-admin.site.register(Sale)
+admin.site.register(GameSale)

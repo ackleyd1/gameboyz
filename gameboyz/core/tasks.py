@@ -5,7 +5,7 @@ import dateutil.parser
 from django.conf import settings
 
 from gameboyz.games.models import Game
-from gameboyz.sales.models import Sale
+from gameboyz.sales.models import GameSale
 
 from celery import shared_task
 from ebaysdk.exception import ConnectionError
@@ -14,7 +14,7 @@ from ebaysdk.finding import Connection
 @shared_task(name='updatesales')
 def updatesales():
     """
-    Celery task that loops through our :model:`games.Game` and uses the ebay finding API: https://developer.ebay.com/devzone/finding/callref/findCompletedItems.html and the ebay python SDK: https://github.com/timotheus/ebaysdk-python/ to create sales with :model:`sales.Sale`
+    Celery task that loops through our :model:`games.Game` and uses the ebay finding API: https://developer.ebay.com/devzone/finding/callref/findCompletedItems.html and the ebay python SDK: https://github.com/timotheus/ebaysdk-python/ to create sales with :model:`sales.GameSale`
     """
     for game in Game.objects.all():
         try:
@@ -23,8 +23,8 @@ def updatesales():
             if response.reply.ack == 'Success' and 'item' in response.dict()['searchResult'].keys():
                 for item in response.dict()['searchResult']['item']:
                     if 'productId' in item.keys():
-                        if game.epid == item['productId']['value'] and not Sale.objects.filter(url=item['viewItemURL']).exists() and item['sellingStatus']['sellingState'] == "EndedWithSales" and item['sellingStatus']['convertedCurrentPrice']["_currencyId"] == "USD" and item['country'] == 'US':
-                            Sale.objects.create(
+                        if game.epid == item['productId']['value'] and not GameSale.objects.filter(url=item['viewItemURL']).exists() and item['sellingStatus']['sellingState'] == "EndedWithSales" and item['sellingStatus']['convertedCurrentPrice']["_currencyId"] == "USD" and item['country'] == 'US':
+                            GameSale.objects.create(
                                 title=item['title'],
                                 game=game,
                                 country=item['country'],

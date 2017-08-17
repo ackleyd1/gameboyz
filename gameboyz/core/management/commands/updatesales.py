@@ -6,7 +6,7 @@ from django.conf import settings
 
 from gameboyz.games.models import Game
 
-from gameboyz.sales.models import Sale
+from gameboyz.sales.models import GameSale
 
 from ebaysdk.exception import ConnectionError
 from ebaysdk.finding import Connection
@@ -22,8 +22,8 @@ class Command(BaseCommand):
               if response.reply.ack == 'Success' and 'item' in response.dict()['searchResult'].keys():
                   for item in response.dict()['searchResult']['item']:
                       if 'productId' in item.keys():
-                          if game.epid == item['productId']['value'] and not Sale.objects.filter(url=item['viewItemURL']).exists() and item['sellingStatus']['sellingState'] == "EndedWithSales" and item['sellingStatus']['convertedCurrentPrice']["_currencyId"] == "USD" and item['country'] == 'US':
-                              Sale.objects.create(
+                          if game.epid == item['productId']['value'] and not GameSale.objects.filter(url=item['viewItemURL']).exists() and item['sellingStatus']['sellingState'] == "EndedWithSales" and item['sellingStatus']['convertedCurrentPrice']["_currencyId"] == "USD" and item['country'] == 'US':
+                              GameSale.objects.create(
                                   title=item['title'],
                                   game=game,
                                   country=item['country'],

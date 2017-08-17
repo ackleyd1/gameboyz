@@ -2,7 +2,7 @@ from django.conf import settings
 from django.conf.urls import url, include
 from django.contrib import admin
 
-from gameboyz.core.views import HomeView
+from gameboyz.core.views import HomeView, UserCollectionView
 from gameboyz.games.views import BaseGameListView, BaseGameDetailView, BaseGameUpdateView, BaseGameDeleteView
 from gameboyz.consoles.views import BaseConsoleListView, BaseConsoleDetailView, BaseConsoleUpdateView, BaseConsoleDeleteView, ConsoleCreateView
 
@@ -25,4 +25,7 @@ urlpatterns = [
     url(r'^accounts/', include('allauth.urls')),
     url(r'^games/', include('gameboyz.games.urls', namespace='games')),
     url(r'^consoles/', include('gameboyz.consoles.urls', namespace='consoles')),
+    # user page
+    url(r'^users/(?P<username>[-\w.+@]+)/$', UserCollectionView.as_view(), name='collection'),
+
 ]

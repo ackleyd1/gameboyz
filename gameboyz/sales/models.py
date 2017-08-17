@@ -2,7 +2,7 @@ from django.db import models
 
 from gameboyz.games.models import Game
 
-class Sale(models.Model):
+class GameSale(models.Model):
     title = models.CharField(max_length=256)
     game = models.ForeignKey(Game)
     country = models.CharField(max_length=16)

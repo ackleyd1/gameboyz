@@ -64,13 +64,13 @@ class Game(TimeStampedModel):
         return reverse('games:detail', args=[str(self.id)])
 
     def get_price(self):
-        if self.sale_set.count() == 0:
+        if self.gamesale_set.count() == 0:
             return None
         else:
             price = 0
-            for sale in self.sale_set.all():
+            for sale in self.gamesale_set.all():
                 price += sale.price
-            return price / self.sale_set.count()
+            return price / self.gamesale_set.count()
 
     def get_other_games(self):
         return self.basegame.game_set.all().exclude(id=self.id)
@@ -85,7 +85,7 @@ class GameListing(TimeStampedModel):
         return "%s-%s" %(self.game.basegame.name, self.condition)
 
     def get_absolute_url(self):
-        return reverse('games:detail', args=[str(self.game.id)])
+        return reverse('games:listing', args=[str(self.game.id), str(self.id)])
 
 
 def create_unique_slug(instance, sender, new_slug=None):
