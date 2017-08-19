@@ -27,47 +27,11 @@
 
         <p>{{ game.basegame.name }}</p>
 
-        <p>{{ game.console }}</p>
+        <p>{{ game.baseconsole }}</p>
 
         <p>{{ game.basegame.summary }}</p>
 
-        <p>
-          <a href="https://amazon.com/dp/{{ game.asin }}" target="_blank"><img height="50" src="{% static 'games/images/amazon_logo.png' %}" alt="Amazon Logo"></a>
-
-          &nbsp;
-
-          <a href="https://ebay.com/p/{{ game.epid }}" target="_blank"><img height="50" src="{% static 'games/images/ebay_logo.png' %}" alt="Ebay Logo"></a>
-
-        </p>
-
-        {% if game.get_price %}
-          <p>Estimated price: <span style="color: green">${{ game.get_price|floatformat:2|intcomma }}</span></p>
-        {% endif %}
-
-        {% if request.user.is_superuser %}
-          <p>
-            <a href="{% url 'games:update' pk=game.pk %}">Edit</a>
-            <a href="{% url 'games:delete' pk=game.pk %}">Delete</a>
-          </p>
-        {% endif %}
-
-        {% if request.user.is_authenticated %}
-        <p><a href="{% url 'games:listing_create' pk=game.pk %}">Sell one a dez boyz</a></p>
-        {% endif %}
-
-        <div>
-          {% if game.get_other_games %}
-            {% for game in game.get_other_games %}
-              <div>
-                <a href="{{ game.get_absolute_url }}">{{ game.basegame.name }}</a>
-              </div>
-            {% endfor %}
-          {% else %}
-            <p>This game is not available on other consoles</p>
-          {% endif %}
-          
-        </div>
-
+        <p><a href="{% url 'gamelistings-create' baseconsole_slug=view.kwargs.baseconsole_slug game_slug=view.kwargs.game_slug %}">Add to your collection</a></p>
 
       </div>
     </div>
@@ -82,66 +46,24 @@
     </div>
 
     <div class="row card-deck">
-      {% for listing in game.gamelisting_set.all %}
+      {% for gamelisting in game.gamelisting_set.all %}
         <div class="col-6 col-sm-4 col-lg-3" style="padding: 1.5rem">
           <div class="card">
-            {% if listing.game.image %}
-              <img class="card-img-top" style="width: 100%" src="{{ listing.game.image.url }}" alt="{{ listing.game.basegame.name }}">
+            {% if gamelisting.game.image %}
+              <img class="card-img-top" style="width: 100%" src="{{ gamelisting.game.image.url }}" alt="{{ gamelisting.game.basegame.name }}">
             {% else %}
               <img class="card-img-top" style="width: 100%" src="{% static 'core/images/default.png' %}" alt="Default image">
             {% endif %}
             <div class="card-block">
-              <h4 class="card-title text-center">{{ listing.price }}</h4>
-              <p class="card-text hidden-md-down">{{ listing.user }} | {{ listing.condition }}</p>
+              <h4 class="card-title text-center">{{ gamelisting.price }}</h4>
+              <p class="card-text hidden-md-down">{{ gamelisting.user }} | {{ gamelisting.condition }}</p>
             </div>
             <div class="card-footer text-center">
-              <a href="{{ listing.get_absolute_url }}" class="card-link">View More</a>
+              <a href="{{ gamelisting.get_absolute_url }}" class="card-link">View More</a>
             </div>
           </div>
         </div>
       {% endfor %}
-    </div>
-
-    <br>
-
-    <hr style="border-color:black;">
-
-    <br>
-
-    <div class="row" style="justify-content: center">
-      <br>
-      <h1>SALES</h1>
-    </div>
-
-    <br>
-
-    <div class="row">
-      {% if game.gamesale_set.count == 0 %}
-        <h1>There is no sales data recorded for this game</h1>
-      {% else %}
-        <table class="table table-striped">
-          <thead style="background-color: #20bfd2">
-              <tr>
-                  <th>#</th>
-                  <th>Title</th>
-                  <th>Condition</th>
-                  <th>Date Sold</th>
-                  <th>Price</th>
-              </tr>
-          </thead>
-          <tbody>
-              {% for sale in game.gamesale_set.all %}
-                  <tr>
-                      <th scope="row">{{ forloop.counter }}</th>
-                      <td><a href="{{ sale.url }}">{{ sale.title }}</a></td>
-                      <td>{{ sale.condition }}</td>
-                      <td>{{ sale.sold }}</td>
-                      <td style="color: green">${{ sale.price|floatformat:2|intcomma }}</td>
-                  </tr>
-              {% endfor %}
-          </tbody>
-        </table>
-      {% endif %}
     </div>
   </div>
 {% endblock content %}

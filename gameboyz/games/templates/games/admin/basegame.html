@@ -23,6 +23,8 @@
     <p>{{ basegame.total_rating }}</p>
     <p>{{ basegame.total_rating_count }}</p>
 
+    <p><a href="{% url 'basegames:games-create' basegame_pk=basegame.pk %}">Create another game</a></p>
+
     <div class="row card-deck">
       {% for game in basegame.game_set.all %}
         <div class="col-6 col-sm-4 col-lg-3" style="padding: 1.5rem">
@@ -34,10 +36,10 @@
             {% endif %}
             <div class="card-block">
               <h4 class="card-title text-center">{{ game.basegame.name }}</h4>
-              <p class="card-text hidden-md-down">{{ game.console }}</p>
+              <p class="card-text">{{ game.baseconsole }}</p>
             </div>
             <div class="card-footer text-center">
-              <a href="{{ game.get_absolute_url }}" class="card-link">View More</a>
+              <a href="{% url 'basegames:games-detail' basegame_pk=basegame.pk game_pk=game.pk %}" class="card-link">View More</a>
             </div>
           </div>
         </div>
@@ -46,8 +48,8 @@
 
     {% if request.user.is_superuser %}
       <p>
-        <a href="{% url 'basegame-update' pk=basegame.pk %}">Edit</a>
-        <a href="{% url 'basegame-delete' pk=basegame.pk %}">Delete</a>
+        <a href="{% url 'basegames:update' basegame_pk=basegame.pk %}">Update</a>
+        <a href="{% url 'basegames:delete' basegame_pk=basegame.pk %}">Delete</a>
       </p>
     {% endif %}
   </div>

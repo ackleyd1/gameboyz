@@ -1,21 +1,21 @@
 import braintree
 
-from django.forms import ValidationError
-from django.shortcuts import render
-from django.core.urlresolvers import reverse, reverse_lazy
+from django.core.urlresolvers import reverse
 from django.views.generic import View, FormView
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView, SingleObjectMixin
-from django.views.generic.edit import FormMixin, CreateView, UpdateView, DeleteView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormMixin
 from django.db.models import Count
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.contrib.auth.models import User
-from django.conf import settings
+from django.core.exceptions import PermissionDenied, ObjectDoesNotExist, MultipleObjectsReturned
 
 from gameboyz.core.mixins import UserMixin
 
+from gameboyz.consoles.models import BaseConsole
+
 from .models import BaseGame, Game, GameListing
-from .forms import BaseGameUpdateForm, GameUpdateForm, BraintreeSaleForm
+from .forms import BaseGameUpdateForm, GameUpdateForm, GameListingUpdateForm, BraintreeSaleForm
+
+from django.conf import settings
 
 if settings.DEBUG:
     braintree.Configuration.configure(braintree.Environment.Sandbox,
@@ -23,7 +23,7 @@ if settings.DEBUG:
                                     public_key=settings.BRAINTREE_PUBLIC_KEY,
                                     private_key=settings.BRAINTREE_PRIVATE_KEY)
 
-class GameListView(UserMixin, ListView):
+class GameList(UserMixin, ListView):
     model = Game
     template_name = 'games/game_list.html'
     context_object_name = 'games'
@@ -37,63 +37,53 @@ class GameListView(UserMixin, ListView):
 
     def get_queryset(self, *args, **kwargs):
         games = super().get_queryset(*args, **kwargs)
+        games = games.filter(baseconsole__slug=self.kwargs.get('baseconsole_slug'))
         q = self.request.GET.get('q')
         if q:
             games = games.filter(basegame__name__icontains=q)
         return games
 
-class GameDetailView(UserMixin, DetailView):
+class GameDetail(UserMixin, DetailView):
     model = Game
     template_name = 'games/game.html'
     context_object_name = 'game'
 
-class GameUpdateView(UpdateView):
-    model = Game
-    template_name = 'core/update.html'
-    form_class = GameUpdateForm
+    def get_object(self):
+        queryset = Game.objects.filter(baseconsole__slug=self.kwargs.get('baseconsole_slug'), slug=self.kwargs.get('game_slug'))
+        if not queryset.exists():
+            raise ObjectDoesNotExist
+        if queryset.count() > 1:
+            raise MultipleObjectsReturned
+        game = queryset.get()
+        return game
 
-class GameDeleteView(DeleteView):
-    model = Game
-    template_name = 'core/delete.html'
-    success_url = reverse_lazy('games:list')
+##########################################################
+# GameListing Views
+##########################################################
 
-class BaseGameListView(UserMixin, ListView):
-    model = BaseGame
-    template_name = 'games/basegame_list.html'
-    context_object_name = 'basegames'
-    paginate_by = 20
-    queryset = BaseGame.objects.all().annotate(gamesale_count=Count('game__gamesale')).order_by('-gamesale_count')
-
-class BaseGameDetailView(UserMixin, DetailView):
-    model = BaseGame
-    template_name = 'games/basegame.html'
-    context_object_name = 'basegame'
-
-class BaseGameUpdateView(UpdateView):
-    model = BaseGame
-    template_name = 'core/update.html'
-    form_class = BaseGameUpdateForm
-
-class BaseGameDeleteView(DeleteView):
-    model = BaseGame
-    template_name = 'core/delete.html'
-    success_url = reverse_lazy('basegame-list')
-
-class GameListingCreateView(CreateView):
+class GameListingCreate(CreateView):
     model = GameListing
     template_name = 'core/create.html'
-    fields = ["price", "condition"]
+    fields = ['price', 'condition']
 
     def form_valid(self, form):
-        form.instance.user = User.objects.get(id=self.request.user.id)
-        form.instance.game = Game.objects.get(id=self.kwargs.get('pk'))
+        gamelisting = form.save(commit=False)
+        queryset = Game.objects.filter(baseconsole__slug=self.kwargs.get('baseconsole_slug'), slug=self.kwargs.get('game_slug'))
+        if not queryset.exists():
+            raise ObjectDoesNotExist
+        if queryset.count() > 1:
+            raise MultipleObjectsReturned
+        game = queryset.get()
+        gamelisting.game = game
+        gamelisting.user = self.request.user
+        self.object = gamelisting.save()
         return super().form_valid(form)
 
-class GameListingDisplayView(DetailView):
+class GameListingDisplay(UserMixin, DetailView):
     model = GameListing
     template_name = 'games/gamelisting.html'
     context_object_name = 'gamelisting'
-    pk_url_kwarg = 'id'
+    pk_url_kwarg = 'gamelisting_pk'
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -101,12 +91,11 @@ class GameListingDisplayView(DetailView):
         context['sale_form'] = BraintreeSaleForm()
         return context
 
-class GameListingSaleView(SingleObjectMixin, FormView):
+class GameListingSale(SingleObjectMixin, FormView):
+    model = GameListing
     template_name = 'games/gamelisting.html'
     form_class = BraintreeSaleForm
-    success_url = reverse_lazy('games:list')
-    pk_url_kwarg = 'id'
-    model = GameListing
+    pk_url_kwarg = 'gamelisting_pk'
 
     def form_valid(self, form):
         nonce = form.cleaned_data['payment_method_nonce']
@@ -120,19 +109,53 @@ class GameListingSaleView(SingleObjectMixin, FormView):
         })
 
         if result.is_success or result.transaction:
+            gamelisting.delete()
             return super().form_valid(form)
         else:
             return super().form_invalid(form)
 
     def get_success_url(self):
-        gamelisting = self.get_object()
-        return reverse('games:detail', kwargs={'pk': gamelisting.game.id})
+        return reverse('games-detail', kwargs={'baseconsole_slug': self.kwargs.get('baseconsole_slug'),'game_slug': self.kwargs.get('game_slug')})
 
-class GameListingDetailView(View):
+class GameListingDetail(View):
     def get(self, request, *args, **kwargs):
-        view = GameListingDisplayView.as_view()
+        view = GameListingDisplay.as_view()
         return view(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        view = GameListingSaleView.as_view()
+        if not self.request.user.is_authenticated:
+            raise PermissionDenied
+        view = GameListingSale.as_view()
         return view(request, *args, **kwargs)
+
+class GameListingUpdate(UserMixin, UpdateView):
+    model = GameListing
+    template_name = 'core/update.html'
+    form_class = GameListingUpdateForm
+    pk_url_kwarg = 'gamelisting_pk'
+
+    def get_object(self):
+        obj = super().get_object()
+        if obj.user != self.request.user:
+            raise PermissionDenied
+
+    # def get_initial(self):
+    #     initial = super().get_initial()
+    #     obj = self.get_object()
+    #     initial['price'] = obj.price
+    #     initial['condition'] = obj.condition
+    #     return initial
+
+class GameListingDelete(UserMixin, DeleteView):
+    model = GameListing
+    template_name = 'core/delete.html'
+    pk_url_kwarg = 'gamelisting_pk'
+
+    def get_object(self):
+        obj = super().get_object()
+        if obj.user != self.request.user:
+            raise PermissionDenied
+
+    def get_success_url(self):
+        return reverse('games-detail', kwargs={'baseconsole_slug': self.kwargs.get('baseconsole_slug'),'game_slug': self.kwargs.get('game_slug')})
+

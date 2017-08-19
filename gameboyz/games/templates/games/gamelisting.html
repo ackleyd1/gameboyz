@@ -11,21 +11,30 @@
     <p>{{ gamelisting.condition }}</p>
     <p>{{ gamelisting.price }}</p>
     <p>{{ gamelisting.user }}</p>
+    {% if request.user.is_authenticated %}
     <button type="button" class="btn btn-primary my-2 my-sm-0" data-toggle="modal" data-target="#BuyModal">Buy</button>
+    {% endif %}
+    {% if request.user == gamelisting.user %}
+    <p>
+      <a href="{% url 'gamelistings-update' baseconsole_slug=view.kwargs.baseconsole_slug game_slug=view.kwargs.game_slug gamelisting_pk=view.kwargs.gamelisting_pk %}">Update</a>
+      <a href="{% url 'gamelistings-delete' baseconsole_slug=view.kwargs.baseconsole_slug game_slug=view.kwargs.game_slug gamelisting_pk=view.kwargs.gamelisting_pk %}">Delete</a>
+    </p>
+    {% endif %}
+    
 
     <div class="modal fade" id="BuyModal" tabindex="-1" role="dialog" aria-labelledby="BuyModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="BuyModal">Buy {{ listing.game.basegame.name }}</h5>
+            <h5 class="modal-title" id="BuyModal">Buy {{ gamelisting.game.basegame.name }}</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body">
+            <p>{{ gamelisting.price }}</p>
             <form action="{{ gamelisting.get_absolute_url }}" method="post" id="payment-form">
               {% csrf_token %}
-              Amount: <input id="amount" name="amount" type="tel" min="1" placeholder="Amount" value="10"><br />
               <input type="hidden" id="nonce" name="payment_method_nonce" />
 
               <div class="bt-drop-in-wrapper">

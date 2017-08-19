@@ -29,39 +29,36 @@ class Collection(TimeStampedModel):
         return self.name
 
 class BaseGame(TimeStampedModel):
-    name                = models.CharField(max_length=128)
-    url                 = models.URLField()
-    popularity          = models.FloatField()
-    summary             = models.TextField(null=True, blank=True)
-    total_rating        = models.FloatField(null=True, blank=True)
-    total_rating_count  = models.PositiveIntegerField(null=True, blank=True)
+    name = models.CharField(max_length=128)
+    url = models.URLField()
+    popularity = models.FloatField()
+    summary = models.TextField(null=True, blank=True)
+    total_rating = models.FloatField(null=True, blank=True)
+    total_rating_count = models.PositiveIntegerField(null=True, blank=True)
 
     # relationships each instance will have
-    franchise           = models.ForeignKey(Franchise, null=True, blank=True, on_delete=models.SET_NULL)
-    collections         = models.ManyToManyField(Collection, blank=True)
-    keywords            = models.ManyToManyField(Keyword, blank=True)
+    franchise = models.ForeignKey(Franchise, null=True, blank=True, on_delete=models.SET_NULL)
+    collections = models.ManyToManyField(Collection, blank=True)
+    keywords = models.ManyToManyField(Keyword, blank=True)
 
     def __str__(self):
         return self.name
 
-    def get_absolute_url(self):
-        return reverse('basegame-detail', args=[str(self.id)])
-
 class Game(TimeStampedModel):
-    basegame    = models.ForeignKey(BaseGame)
-    slug        = models.SlugField(db_index=True, max_length=128)
-    edition     = models.CharField(max_length=32, default="Original")
-    console     = models.ForeignKey("consoles.BaseConsole")
-    asin        = models.CharField(max_length=32, null=True, blank=True, unique=True)
-    epid        = models.CharField(max_length=32, null=True, blank=True, unique=True)
-    image       = models.ImageField(upload_to=image_path_rename, null=True, blank=True)
-    published   = models.BooleanField(default=False)
+    basegame = models.ForeignKey(BaseGame)
+    slug = models.SlugField(db_index=True, max_length=128)
+    edition = models.CharField(max_length=32, default="Original")
+    baseconsole = models.ForeignKey("consoles.BaseConsole")
+    asin = models.CharField(max_length=32, null=True, blank=True, unique=True)
+    epid = models.CharField(max_length=32, null=True, blank=True, unique=True)
+    image = models.ImageField(upload_to=image_path_rename, null=True, blank=True)
+    published = models.BooleanField(default=False)
 
     def __str__(self):
         return self.basegame.name
 
     def get_absolute_url(self):
-        return reverse('games:detail', args=[str(self.id)])
+        return reverse('games-detail', kwargs={'baseconsole_slug': self.baseconsole.slug, 'game_slug': self.slug})
 
     def get_price(self):
         if self.gamesale_set.count() == 0:
@@ -85,8 +82,7 @@ class GameListing(TimeStampedModel):
         return "%s-%s" %(self.game.basegame.name, self.condition)
 
     def get_absolute_url(self):
-        return reverse('games:listing', args=[str(self.game.id), str(self.id)])
-
+        return reverse('gamelistings-detail', kwargs={'baseconsole_slug': self.game.baseconsole.slug, 'game_slug': self.game.slug, 'gamelisting_pk': str(self.pk)})
 
 def create_unique_slug(instance, sender, new_slug=None):
     slug = slugify(instance.name)

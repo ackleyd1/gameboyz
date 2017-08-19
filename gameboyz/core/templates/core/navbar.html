@@ -16,21 +16,17 @@
       <li class="nav-item">
         <a href="{% url 'home' %}" class="nav-link">Home</a>
       </li>
-      <li class="nav-item">
-        <a href="{% url 'basegame-list' %}" class="nav-link">BaseGames</a>
-      </li>
-      <li class="nav-item">
-        <a href="{% url 'games:list' %}" class="nav-link">Games</a>
-      </li>
-      <li class="nav-item">
-        <a href="{% url 'baseconsole-list' %}" class="nav-link">BaseConsoles</a>
-      </li>
-      <li class="nav-item">
-        <a href="{% url 'consoles:list' %}" class="nav-link">Consoles</a>
-      </li>
       {% if request.user.is_authenticated %}
       <li class="nav-item">
         <a href="{% url 'collection' username=request.user.username%}" class="nav-link">Profile</a>
+      </li>
+      {% endif %}
+      {% if request.user.is_staff %}
+      <li class="nav-item">
+        <a href="{% url 'basegames:list' %}" class="nav-link">BaseGames</a>
+      </li>
+      <li class="nav-item">
+        <a href="{% url 'baseconsoles:list' %}" class="nav-link">BaseConsoles</a>
       </li>
       {% endif %}
     </ul>

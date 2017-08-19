@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.auth.models import User
 
 class TimeStampedModel(models.Model):
     """Abstract model for inheriting created and updated fields."""

@@ -1,10 +1,12 @@
 {% extends "core/base.html" %}
 {% load static %}
 
-{% block title %}| BaseGames{% endblock title %}
+{% block title %}| BaseConsoles{% endblock title %}
 
 {% block content %}
   <div class="container">
+
+    <p class="text-center"><a href="{% url 'baseconsoles:create' %}">Create a new one</a></p>
 
     <br>
 
@@ -34,15 +36,15 @@
     {% endif %}
 
     <div class="row card-deck">
-      {% for basegame in basegames %}
+      {% for baseconsole in baseconsoles %}
         <div class="col-6 col-sm-4 col-lg-3" style="padding: 1.5rem">
           <div class="card">
             <div class="card-block">
-              <h4 class="card-title text-center">{{ basegame.name }}</h4>
+              <h4 class="card-title text-center">{{ baseconsole.name }}</h4>
               <p class="card-text hidden-md-down"></p>
             </div>
             <div class="card-footer text-center">
-              <a href="{{ basegame.get_absolute_url }}" class="card-link">View More</a>
+              <a href="{% url 'baseconsoles:detail' baseconsole_pk=baseconsole.pk %}" class="card-link">View More</a>
             </div>
           </div>
         </div>

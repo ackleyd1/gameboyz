@@ -7,6 +7,7 @@
     <title>Gameboyz {% block title %}{% endblock title %}</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="{% static 'core/css/dashboard.css' %}">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
 
 
     {% block head %}
@@ -17,10 +18,38 @@
 
     {% include "core/navbar.html" %}
 
+    {% if messages %}
+      <ul class="messages">
+        {% for message in messages %}
+          <li class="alert alert-info" role="alert">{{ message}}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    <style>
+    .messages {
+      list-style-type: none;
+      position: fixed;
+      top: 100px;
+      right: 0;
+    }
+    .alert {
+      display: none;
+    }
+    </style>
+
+    <script>
+      $(document).ready(function() {
+        $(".alert").each(function () {
+          $(this).slideDown().delay(1000).slideUp();
+        });
+      });
+    </script>
+    
+
     {% block content %}
     {% endblock content %}
 
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
   </body>

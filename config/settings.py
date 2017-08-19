@@ -52,7 +52,7 @@ THIRD_PARTY_APPS = [
     'crispy_forms',
     'django_celery_beat',
     'django_celery_results',
-    'debug_toolbar'
+    'debug_toolbar',
 ]
 
 INSTALLED_APPS = LOCAL_APPS + DJANGO_APPS + THIRD_PARTY_APPS
@@ -84,6 +84,7 @@ EMAIL_PORT = 587
 EMAIL_USER_TLS = False
 
 MIDDLEWARE = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -91,8 +92,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
+
+INTERNAL_IPS = ['104.131.20.104',]
 
 ROOT_URLCONF = 'config.urls'
 

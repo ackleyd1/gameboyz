@@ -2,30 +2,70 @@ from django.conf import settings
 from django.conf.urls import url, include
 from django.contrib import admin
 
-from gameboyz.core.views import HomeView, UserCollectionView
-from gameboyz.games.views import BaseGameListView, BaseGameDetailView, BaseGameUpdateView, BaseGameDeleteView
-from gameboyz.consoles.views import BaseConsoleListView, BaseConsoleDetailView, BaseConsoleUpdateView, BaseConsoleDeleteView, ConsoleCreateView
+from gameboyz.core.views import Home, UserCollection, BaseConsoleOverview
+
+from gameboyz.games.views import GameList, GameDetail, GameListingDetail, GameListingCreate, GameListingUpdate, GameListingDelete
+from gameboyz.consoles.views import ConsoleList
 
 urlpatterns = [
-    url(r'^$', HomeView.as_view(), name='home'),
-    # base game urls
-    url(r'^basegames/$', BaseGameListView.as_view(), name='basegame-list'),
-    url(r'^basegames/(?P<pk>\d+)/$', BaseGameDetailView.as_view(), name='basegame-detail'),
-    url(r'^basegames/(?P<pk>\d+)/update/$', BaseGameUpdateView.as_view(), name='basegame-update'),
-    url(r'^basegames/(?P<pk>\d+)/delete/$', BaseGameDeleteView.as_view(), name='basegame-delete'),
-    # base console urls
-    url(r'^baseconsoles/$', BaseConsoleListView.as_view(), name='baseconsole-list'),
-    url(r'^baseconsoles/(?P<pk>\d+)/$', BaseConsoleDetailView.as_view(), name='baseconsole-detail'),
-    url(r'^baseconsoles/(?P<pk>\d+)/add/$', ConsoleCreateView.as_view(), name='console-create'),
-    url(r'^baseconsoles/(?P<pk>\d+)/update/$', BaseConsoleUpdateView.as_view(), name='baseconsole-update'),
-    url(r'^baseconsoles/(?P<pk>\d+)/delete/$', BaseConsoleDeleteView.as_view(), name='baseconsole-delete'),
-    # rest of the includes
+    url(r'^$', Home.as_view(), name='home'),
+    url(r'^basegames/', include('gameboyz.games.adminurls', namespace='basegames')),
+    url(r'^baseconsoles/', include('gameboyz.consoles.adminurls', namespace='baseconsoles')),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^accounts/', include('allauth.urls')),
-    url(r'^games/', include('gameboyz.games.urls', namespace='games')),
-    url(r'^consoles/', include('gameboyz.consoles.urls', namespace='consoles')),
-    # user page
-    url(r'^users/(?P<username>[-\w.+@]+)/$', UserCollectionView.as_view(), name='collection'),
+    # User urls
+    url(
+        regex=r'^users/(?P<username>[-\w.+@]+)/$',
+        view=UserCollection.as_view(),
+        name='collection'
+    ),
+    # Overview
+    url(
+        regex=r'^(?P<baseconsole_slug>[-\w]+)/$',
+        view=BaseConsoleOverview.as_view(),
+        name='overview'
+    ),
+    # Game urls
+    url(
+        regex=r'^(?P<baseconsole_slug>[-\w]+)/games/$',
+        view=GameList.as_view(),
+        name='games'
+    ),
+    url(
+        regex=r'^(?P<baseconsole_slug>[-\w]+)/games/(?P<game_slug>[-\w]+)/$',
+        view=GameDetail.as_view(),
+        name='games-detail'
+    ),
+    url(
+        regex=r'^(?P<baseconsole_slug>[-\w]+)/games/(?P<game_slug>[-\w]+)/create/$',
+        view=GameListingCreate.as_view(),
+        name='gamelistings-create'
+    ),
+    url(
+        regex=r'^(?P<baseconsole_slug>[-\w]+)/games/(?P<game_slug>[-\w]+)/(?P<gamelisting_pk>\d+)/$',view=GameListingDetail.as_view(),
+        name='gamelistings-detail'
+    ),
+    url(
+        regex=r'^(?P<baseconsole_slug>[-\w]+)/games/(?P<game_slug>[-\w]+)/(?P<gamelisting_pk>\d+)/update/$',view=GameListingUpdate.as_view(),
+        name='gamelistings-update'
+    ),
+    url(
+        regex=r'^(?P<baseconsole_slug>[-\w]+)/games/(?P<game_slug>[-\w]+)/(?P<gamelisting_pk>\d+)/delete/$',view=GameListingDelete.as_view(),
+        name='gamelistings-delete'
+    ),
+    # Console urls
+    url(
+        regex=r'^(?P<baseconsole_slug>[-\w]+)/consoles/$',
+        view=ConsoleList.as_view(),
+        name='consoles'
+    ),
+    # Accessory urls
 
 ]
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns = [
+        url(r'^__debug__/', include(debug_toolbar.urls)),
+    ] + urlpatterns

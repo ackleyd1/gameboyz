@@ -3,56 +3,27 @@ from django.core.urlresolvers import reverse_lazy
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from gameboyz.core.mixins import UserMixin
 
-from .models import BaseConsole, Console
-from .forms import BaseConsoleUpdateForm, ConsoleUpdateForm
+from .models import Console
 
-class ConsoleListView(UserMixin, ListView):
+class ConsoleList(UserMixin, ListView):
     model = Console
     template_name = 'consoles/console_list.html'
     context_object_name = 'consoles'
     paginate_by = 20
+    # queryset = Console.objects.all().annotate(consolesale_count=Count('consolesale')).order_by('-consolesale_count')
 
-class ConsoleDetailView(UserMixin, DetailView):
-    model = Console
-    template_name = 'consoles/console.html'
-    context_object_name = 'console'
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['search'] = True
+        return context
 
-class ConsoleUpdateView(UpdateView):
-    model = Console
-    template_name = 'core/update.html'
-    form_class = ConsoleUpdateForm
-
-class ConsoleCreateView(CreateView):
-    model = Console
-    fields = '__all__'
-    template_name = 'core/create.html'
-
-class ConsoleDeleteView(DeleteView):
-    model = Console
-    template_name = 'core/delete.html'
-    success_url = reverse_lazy('consoles:list')
-
-class BaseConsoleListView(UserMixin, ListView):
-    model = BaseConsole
-    template_name = 'consoles/baseconsole_list.html'
-    context_object_name = 'baseconsoles'
-    paginate_by = 20
-
-class BaseConsoleDetailView(UserMixin, DetailView):
-    model = BaseConsole
-    template_name = 'consoles/baseconsole.html'
-    context_object_name = 'baseconsole'
-
-class BaseConsoleUpdateView(UpdateView):
-    model = BaseConsole
-    template_name = 'core/update.html'
-    form_class = BaseConsoleUpdateForm
-
-class BaseConsoleDeleteView(DeleteView):
-    model = BaseConsole
-    template_name = 'core/delete.html'
-    success_url = reverse_lazy('console-list')
+    def get_queryset(self, *args, **kwargs):
+        consoles = super().get_queryset(*args, **kwargs)
+        consoles = consoles.filter(baseconsole__slug=self.kwargs.get('baseconsole_slug'))
+        q = self.request.GET.get('q')
+        if q:
+            consoles = consoles.filter(baseconsole__name__icontains=q)
+        return consoles

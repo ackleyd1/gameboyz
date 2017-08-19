@@ -24,6 +24,8 @@
 
         <p>{{ console.slug }}</p>
 
+        <p><a href="{% url 'baseconsoles:detail' baseconsole_pk=console.baseconsole.pk %}">Back to the baseconsole</a></p>
+
         <p>
           <a href="https://amazon.com/dp/{{ console.asin }}" target="_blank"><img height="50" src="{% static 'games/images/amazon_logo.png' %}" alt="Amazon Logo"></a>
 
@@ -35,8 +37,8 @@
 
         {% if request.user.is_superuser %}
           <p>
-            <a href="{% url 'consoles:update' pk=console.pk %}">Edit</a>
-            <a href="{% url 'consoles:delete' pk=console.pk %}">Delete</a>
+            <a href="{% url 'baseconsoles:consoles-update' baseconsole_pk=console.baseconsole.pk console_pk=console.pk %}">Update</a>
+            <a href="{% url 'baseconsoles:consoles-delete' baseconsole_pk=console.baseconsole.pk console_pk=console.pk %}">Delete</a>
           </p>
         {% endif %}
 

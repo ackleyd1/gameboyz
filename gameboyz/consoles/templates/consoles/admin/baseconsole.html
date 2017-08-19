@@ -8,8 +8,11 @@
     <h1>{{ baseconsole.name }}</h1>
 
     {% if request.user.is_superuser %}
-      <p><a href="{% url 'console-create' pk=baseconsole.pk %}">Create a new Console</a></p>
+      <p><a href="{% url 'baseconsoles:consoles-create' baseconsole_pk=baseconsole.pk %}">Create a new Console</a></p>
     {% endif %}
+
+    <p><a href="{% url 'baseconsoles:update' baseconsole_pk=baseconsole.pk %}">Update this baseconsole</a></p>
+    <p><a href="{% url 'baseconsoles:delete' baseconsole_pk=baseconsole.pk %}">Delete this baseconsole</a></p>
 
     <div class="row card-deck">
       {% for console in baseconsole.console_set.all %}
@@ -25,7 +28,7 @@
               <p class="card-text hidden-md-down"></p>
             </div>
             <div class="card-footer text-center">
-              <a href="{{ console.get_absolute_url }}" class="card-link">View More</a>
+              <a href="{% url 'baseconsoles:consoles-detail' baseconsole_pk=baseconsole.pk console_pk=console.pk %}" class="card-link">View More</a>
             </div>
           </div>
         </div>
