@@ -7,10 +7,6 @@
   <div class="container">
     <h1>{{ baseconsole.name }}</h1>
 
-    {% if request.user.is_superuser %}
-      <p><a href="{% url 'baseconsoles:consoles-create' baseconsole_pk=baseconsole.pk %}">Create a new Console</a></p>
-    {% endif %}
-
     <p><a href="{% url 'baseconsoles:update' baseconsole_pk=baseconsole.pk %}">Update this baseconsole</a></p>
     <p><a href="{% url 'baseconsoles:delete' baseconsole_pk=baseconsole.pk %}">Delete this baseconsole</a></p>
 
@@ -33,6 +29,20 @@
           </div>
         </div>
       {% endfor %}
+      {% if request.user.is_superuser %}
+      <div class="col-6 col-sm-4 col-lg-3" style="padding: 1.5rem">
+          <div class="card">
+            <img class="card-img-top" style="width: 100%" src="{% static 'core/images/default.png' %}" alt="Default image">
+            <div class="card-block">
+              <h4 class="card-title text-center">Add Another Console</h4>
+              <p class="card-text hidden-md-down"></p>
+            </div>
+            <div class="card-footer text-center">
+              <a href="{% url 'baseconsoles:consoles-create' baseconsole_pk=baseconsole.pk %}" class="card-link">Add</a>
+            </div>
+          </div>
+        </div>
+      {% endif %}
     </div>
 
   </div>
