@@ -1,6 +1,6 @@
 .vscode
 gameboyz.sock
-static/
+/gameboyz/static
 *.pyc
 __pycache__/
 .DS_Store

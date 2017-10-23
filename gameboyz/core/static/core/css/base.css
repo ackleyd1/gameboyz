@@ -1,0 +1,38 @@
+nav {
+  background-color: #20bfd2;
+  font-family: 'Maven Pro', sans-serif;
+}
+
+nav .brand-logo.center {
+  top: 6px;
+}
+
+.tabs .tab a{
+  color:#20bfd2;
+} /*Black color to the text*/
+
+.tabs .tab a:hover {
+  color:#20bfd2;
+} /*Text color on hover*/
+
+.tabs .tab a.active {
+  color:#20bfd2;
+} /*Background and text color when a tab is active*/
+
+.tabs .indicator {
+  background-color:#20bfd2;
+} /*Color of underline*/
+
+body {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+main {
+  flex: 1 0 auto;
+}
+
+.page-footer {
+  background-color: #5F7779;
+}

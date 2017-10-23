@@ -9,7 +9,6 @@ from django.db.models import Count
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist, MultipleObjectsReturned
 
 from gameboyz.core.mixins import UserMixin
-
 from gameboyz.consoles.models import BaseConsole
 
 from .models import BaseGame, Game, GameListing, GameListingImage
@@ -18,12 +17,14 @@ from .forms import BaseGameUpdateForm, GameUpdateForm, GameListingUpdateForm, Br
 from django.conf import settings
 
 if settings.DEBUG:
-    braintree.Configuration.configure(braintree.Environment.Sandbox,
-                                    merchant_id=settings.BRAINTREE_MERCHANT_ID,
-                                    public_key=settings.BRAINTREE_PUBLIC_KEY,
-                                    private_key=settings.BRAINTREE_PRIVATE_KEY)
+    braintree.Configuration.configure(
+        braintree.Environment.Sandbox,
+        merchant_id=settings.BRAINTREE_MERCHANT_ID,
+        public_key=settings.BRAINTREE_PUBLIC_KEY,
+        private_key=settings.BRAINTREE_PRIVATE_KEY
+    )
 
-class GameList(UserMixin, ListView):
+class GameListView(UserMixin, ListView):
     model = Game
     template_name = 'games/game_list.html'
     context_object_name = 'games'
@@ -43,7 +44,7 @@ class GameList(UserMixin, ListView):
             games = games.filter(basegame__name__icontains=q)
         return games
 
-class GameDetail(UserMixin, DetailView):
+class GameDetailView(UserMixin, DetailView):
     model = Game
     template_name = 'games/game.html'
     context_object_name = 'game'
@@ -61,7 +62,7 @@ class GameDetail(UserMixin, DetailView):
 # GameListing Views
 ##########################################################
 
-class GameListingCreate(CreateView):
+class GameListingCreateView(CreateView):
     model = GameListing
     template_name = 'core/create.html'
     form_class = GameListingCreateForm
@@ -90,7 +91,7 @@ class GameListingCreate(CreateView):
             GameListingImage.objects.create(image=image, gamelisting=gamelisting)
         return super().form_valid(form)
 
-class GameListingDisplay(UserMixin, DetailView):
+class GameListingDisplayView(UserMixin, DetailView):
     model = GameListing
     template_name = 'games/gamelisting.html'
     context_object_name = 'gamelisting'
@@ -102,7 +103,7 @@ class GameListingDisplay(UserMixin, DetailView):
         context['sale_form'] = BraintreeSaleForm()
         return context
 
-class GameListingSale(SingleObjectMixin, FormView):
+class GameListingSaleView(SingleObjectMixin, FormView):
     model = GameListing
     template_name = 'games/gamelisting.html'
     form_class = BraintreeSaleForm
@@ -128,7 +129,7 @@ class GameListingSale(SingleObjectMixin, FormView):
     def get_success_url(self):
         return reverse('games-detail', kwargs={'baseconsole_slug': self.kwargs.get('baseconsole_slug'),'game_slug': self.kwargs.get('game_slug')})
 
-class GameListingDetail(View):
+class GameListingDetailView(View):
     def get(self, request, *args, **kwargs):
         view = GameListingDisplay.as_view()
         return view(request, *args, **kwargs)
@@ -139,7 +140,7 @@ class GameListingDetail(View):
         view = GameListingSale.as_view()
         return view(request, *args, **kwargs)
 
-class GameListingUpdate(UserMixin, UpdateView):
+class GameListingUpdateView(UserMixin, UpdateView):
     model = GameListing
     template_name = 'core/update.html'
     form_class = GameListingUpdateForm
@@ -150,14 +151,7 @@ class GameListingUpdate(UserMixin, UpdateView):
         if obj.user != self.request.user:
             raise PermissionDenied
 
-    # def get_initial(self):
-    #     initial = super().get_initial()
-    #     obj = self.get_object()
-    #     initial['price'] = obj.price
-    #     initial['condition'] = obj.condition
-    #     return initial
-
-class GameListingDelete(UserMixin, DeleteView):
+class GameListingDeleteView(UserMixin, DeleteView):
     model = GameListing
     template_name = 'core/delete.html'
     pk_url_kwarg = 'gamelisting_pk'

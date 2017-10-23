@@ -2,6 +2,34 @@
 {% load static %}
 {% load crispy_forms_tags %}
 
+<nav class="navbar navbar-expand-lg sticky-top navbar-light bg-light">
+  <a class="navbar-brand" href="{% url 'home' %}">
+    <img src="{% static 'core/images/logo_white.png' %}" height="40" class="img-responsive" alt="gameboyz icon">
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+      <li class="nav-item active">
+        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Link</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link disabled" href="#">Disabled</a>
+      </li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input class="form-control mr-sm-2" type="search" placeholder="Search">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    </form>
+  </div>
+</nav>
+
+{% comment %}
 <nav class="navbar navbar-toggleable-md navbar-inverse">
   <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
@@ -16,34 +44,7 @@
         <a href="{% url 'collection' username=request.user.username %}" class="nav-link">Profile</a>
       </li>
       {% endif %}
-      {% if request.user.is_staff %}
-      <li class="nav-item">
-        <a href="{% url 'basegames:list' %}" class="nav-link">Games admin</a>
-      </li>
-      <li class="nav-item">
-        <a href="{% url 'baseconsoles:list' %}" class="nav-link">Consoles admin</a>
-      </li>
-      {% endif %}
     </ul>
-    {% if search %}
-      <form class="form-inline my-2 my-lg-0" method="get" action=".">
-        <input class="form-control mr-sm-2" type="text" name="q" placeholder="Search">
-        <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
-      </form>
-      &nbsp;
-    {% endif %}
-    {% if user_enabled %}
-      {% if request.user.is_authenticated %}
-      <form class="form-inline my-2 my-lg-0" method="post" action="{% url 'account_logout' %}">
-        {% csrf_token %}
-        <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Logout</button>
-      </form>
-      {% else %}
-      <button type="button" class="btn btn-outline-primary my-2 my-sm-0" data-toggle="modal" data-target="#LoginModal">Login</button>
-      &nbsp;
-      <button type="button" class="btn btn-outline-primary my-2 my-sm-0" data-toggle="modal" data-target="#SignupModal">Signup</button>
-      {% endif %}
-    {% endif %}
   </div>
   <a class="navbar-brand" href="{% url 'home' %}">
     <img src="{% static 'core/images/logo_white.png' %}" height="40" class="d-inline-block align-top img-responsive" alt="gameboyz icon">
@@ -53,50 +54,71 @@
       <li class="nav-item">
         <a class="nav-link" href="#">About</a>
       </li>
+      {% if request.user.is_staff %}
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Admin
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+          <a class="dropdown-item" href="{% url 'basegames:list' %}">Games</a>
+          <a class="dropdown-item" href="{% url 'baseconsoles:list' %}">Consoles</a>
+          <a class="dropdown-item" href="{% url 'sales:overview' %}">Sales</a>
+        </div>
+      </li>
+      {% endif %}
+      {% if request.user.is_authenticated %}
+      <form class="form-inline my-2 my-lg-0" method="post" action="{% url 'account_logout' %}">
+        {% csrf_token %}
+        <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Logout</button>
+      </form>
+      {% else %}
+      <button type="button" class="btn btn-outline-primary my-2 my-sm-0" data-toggle="modal" data-target="#login-modal">Login</button>
+      &nbsp;
+      <button type="button" class="btn btn-outline-primary my-2 my-sm-0" data-toggle="modal" data-target="#signup-modal">Signup</button>
+      {% endif %}
     </ul>
   </div>
 </nav>
 
-{% if user_enabled %}
-  {% if not request.user.is_authenticated %}
-  <div class="modal fade" id="LoginModal" tabindex="-1" role="dialog" aria-labelledby="LoginModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="LoginModalLabel">LOG IN</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <form method="post" action="{% url 'account_login' %}">
-            {% csrf_token %}
-            {{ login_form|crispy }}
-            <input type="submit" value="Submit" class="btn btn-success">
-          </form>
-        </div>
+{% if not request.user.is_authenticated %}
+<div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="LoginModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="LoginModalLabel">LOG IN</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="{% url 'account_login' %}">
+          {% csrf_token %}
+          {{ login_form|crispy }}
+          <input type="submit" value="Submit" class="btn btn-success">
+        </form>
       </div>
     </div>
   </div>
+</div>
 
-  <div class="modal fade" id="SignupModal" tabindex="-1" role="dialog" aria-labelledby="SignupModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="SignupModalLabel">Signup</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <form method="post" action="{% url 'account_signup' %}">
-            {% csrf_token %}
-            {{ signup_form|crispy }}
-            <input type="submit" value="Submit" class="btn btn-success">
-          </form>
-        </div>
+<div class="modal fade" id="signup-modal" tabindex="-1" role="dialog" aria-labelledby="SignupModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="SignupModalLabel">Signup</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="{% url 'account_signup' %}">
+          {% csrf_token %}
+          {{ signup_form|crispy }}
+          <input type="submit" value="Submit" class="btn btn-success">
+        </form>
       </div>
     </div>
   </div>
-  {% endif %}
+</div>
 {% endif %}
+{% endcomment %}
