@@ -1,4 +1,5 @@
 {% extends "core/base.html" %}
+{% load static %}
 
 {% block head %}
 <script src="https://js.braintreegateway.com/web/dropin/1.6.1/js/dropin.min.js"></script>
@@ -8,6 +9,9 @@
 {% block content %}
   <div class="container">
     <h1>{{ gamelisting.game.basegame.name }}</h1>
+    {% for gamelistingimage in gamelisting.gamelistingimage_set.all %}
+      <img src="{{ gamelistingimage.image.url }}" alt="{{ gamelistingimage }}">
+    {% endfor %}
     <p>{{ gamelisting.condition }}</p>
     <p>{{ gamelisting.price }}</p>
     <p>{{ gamelisting.user }}</p>

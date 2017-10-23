@@ -1,5 +1,6 @@
 {% extends "core/base.html" %}
 {% load static %}
+{% load humanize %}
 
 {% block title %}| {{ console.baseconsole.name }}{% endblock title %}
 
@@ -44,5 +45,46 @@
 
       </div>
     </div>
+
+    <hr style="border-color:black;">
+
+    <br>
+
+    <div class="row" style="justify-content: center">
+      <br>
+      <h1>SALES</h1>
+    </div>
+
+    <br>
+
+    <div class="row">
+      {% if console.consolesale.count == 0 %}
+        <h1>There is no sales data recorded for this console</h1>
+      {% else %}
+        <table class="table table-striped">
+          <thead style="background-color: #20bfd2">
+              <tr>
+                  <th>#</th>
+                  <th>Title</th>
+                  <th>Condition</th>
+                  <th>Date Sold</th>
+                  <th>Price</th>
+              </tr>
+          </thead>
+          <tbody>
+              {% for sale in console.consolesale_set.all %}
+                  <tr>
+                      <th scope="row">{{ forloop.counter }}</th>
+                      <td><a href="{{ sale.url }}">{{ sale.title }}</a></td>
+                      <td>{{ sale.condition }}</td>
+                      <td>{{ sale.sold }}</td>
+                      <td style="color: green">${{ sale.price|floatformat:2|intcomma }}</td>
+                  </tr>
+              {% endfor %}
+          </tbody>
+        </table>
+      {% endif %}
+    </div>
+
   </div>
 {% endblock content %}

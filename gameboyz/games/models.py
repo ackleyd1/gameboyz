@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 from django.db.models.signals import pre_save
 from django.utils.text import slugify
@@ -6,7 +8,7 @@ from django.contrib.auth.models import User
 
 from gameboyz.core.models import TimeStampedModel
 
-from .utils import image_path_rename
+from .utils import image_path_rename, user_game_image_upload
 
 class Keyword(TimeStampedModel):
     name = models.TextField()    
@@ -83,6 +85,14 @@ class GameListing(TimeStampedModel):
 
     def get_absolute_url(self):
         return reverse('gamelistings-detail', kwargs={'baseconsole_slug': self.game.baseconsole.slug, 'game_slug': self.game.slug, 'gamelisting_pk': str(self.pk)})
+
+class GameListingImage(TimeStampedModel):
+    gamelisting = models.ForeignKey(GameListing)
+    image = models.ImageField(upload_to=user_game_image_upload)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+
+    def __str__(self):
+        return self.gamelisting.game.basegame.name + ': ' + str(self.gamelisting.user) + ' ' + str(self.id)
 
 def create_unique_slug(instance, sender, new_slug=None):
     slug = slugify(instance.name)

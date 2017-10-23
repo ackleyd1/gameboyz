@@ -21,7 +21,6 @@ class BaseConsole(TimeStampedModel):
 class Console(TimeStampedModel):
     """Stores information on Console product releases. Related to :model:`consoles.BaseConsole`"""
     baseconsole = models.ForeignKey(BaseConsole)
-    name = models.CharField(max_length=128)
     slug = models.SlugField(db_index=True, max_length=128)
     edition = models.CharField(max_length=32, default="Original")
     asin = models.CharField(max_length=32, null=True, blank=True, unique=True)

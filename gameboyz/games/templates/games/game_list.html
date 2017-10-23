@@ -1,19 +1,18 @@
 {% extends "core/base.html" %}
 {% load static %}
+{% load humanize %}
 
 {% block title %}| Games{% endblock title %}
 
 {% block content %}
   <div class="container">
 
-    <p>{{ baseconsole_slug }}</p>
-
-    <p>{{ baseconsole }}</p>
+    <p>{{ page_obj }}</p>
 
     <br>
 
     {% if is_paginated %}
-    <nav aria-label="Page navigation example">
+    <nav>
       <ul class="pagination justify-content-center">
         {% if page_obj.has_previous %}
           <li class="page-item">
@@ -56,7 +55,8 @@
             {% endif %}
             <div class="card-block">
               <h4 class="card-title text-center">{{ game.basegame.name }}</h4>
-              <p class="card-text hidden-md-down">{{ game.baseconsole }}</p>
+              <p class="card-text"># of Sales: {{ game.gamesale_set.count }}</p>
+              <p class="card-text">Estimated Price: <span style="color: green">${{ game.get_price|floatformat:2|intcomma }}</span></p>
             </div>
             <div class="card-footer text-center">
               <a href="{{ game.get_absolute_url }}" class="card-link">View More</a>

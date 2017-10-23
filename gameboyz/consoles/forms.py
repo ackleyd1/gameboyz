@@ -9,7 +9,7 @@ Console = apps.get_model('consoles', 'Console')
 
 class BaseConsoleUpdateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
-        super(BaseConsoleUpdateForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.helper.layout.append(Submit('save', 'Save'))
 
@@ -17,9 +17,19 @@ class BaseConsoleUpdateForm(forms.ModelForm):
         model = BaseConsole
         fields = '__all__'
 
+class ConsoleCreateForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.layout.append(Submit('save', 'Save'))
+
+    class Meta:
+        model = Console
+        fields = ['edition', 'asin', 'epid', 'image', 'published']
+
 class ConsoleUpdateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
-        super(ConsoleUpdateForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.helper.layout.append(Submit('save', 'Save'))
 

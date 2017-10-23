@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+{% extends 'core/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}| Sales{% endblock title %}
+
+{% block head %}
+<link rel="stylesheet" type="text/css" href="{% static 'sales/css/summary.css' %}">
+{% endblock head %}
+
+{% block content %}
+
+  <div class="summary container-fluid">
+    <div class="row">
+      <div class="col-6 offset-3">
+        <div class="card total">
+          <div class="card-block">
+            There are a total of <strong>{{ gamesales.game__count }}</strong> games in the database
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-4">
+        <div class="card total">
+          <div class="card-block">
+            
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+        
+        <div class="col-6">
+          <p>Games: </p>
+          <p>Game Sales Count (eBay): {{ gamesales.price__count | intcomma }}</p>
+          <p>Game Sales Sum: ${{ gamesales.price__sum | floatformat:2 | intcomma }}</p>
+          <p>Game Sales Max Price: ${{ gamesales.price__max | floatformat:2 | intcomma }}</p>
+          <p>Game Sale Min Price: ${{ gamesales.price__min | floatformat:2 | intcomma }}</p>
+          <p>Game Sale Avg Price: ${{ gamesales.price__avg | floatformat:2 | intcomma }}</p>
+          <p>Earliest Game Sale Sold: {{ gamesales.sold__min }}</p>
+          <p>Earliest Game Sale Created: {{ gamesales.created__min }}</p>
+          {% for game_month in gamesales.months %}
+          {% if game_month.total %}
+          <p>{{ game_month.name }} : ${{ game_month.total | floatformat:2 | intcomma }}</p>
+          {% endif %}
+          {% endfor %}
+        </div>
+        <div class="col-6">
+          <p>Consoles: {{ consolesales.console__count }}</p>
+          <p>Console Sales Count (eBay): {{ consolesales.price__count | intcomma }}</p>
+          <p>Console Sales Sum: ${{ consolesales.price__sum | floatformat:2 | intcomma }}</p>
+          <p>Console Sales Max Price: ${{ consolesales.price__max | floatformat:2 | intcomma }}</p>
+          <p>Console Sale Min Price: ${{ consolesales.price__min | floatformat:2 | intcomma }}</p>
+          <p>Console Sale Avg Price: ${{ consolesales.price__avg | floatformat:2 | intcomma }}</p>
+          <p>Earliest Console Sale Sold: {{ consolesales.sold__min }}</p>
+          <p>Earliest Console Sale Created: {{ consolesales.created__min }}</p>
+          {% for console_month in consolesales.months %}
+          {% if console_month.total %}
+          <p>{{ console_month.name }} : ${{ console_month.total | floatformat:2 | intcomma }}</p>
+          {% endif %}
+          {% endfor %}
+        </div>
+  </div>
+
+{% endblock content %}

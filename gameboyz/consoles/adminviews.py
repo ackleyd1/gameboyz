@@ -6,7 +6,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from gameboyz.core.mixins import IsStaff
 
 from .models import BaseConsole, Console
-from .forms import BaseConsoleUpdateForm, ConsoleUpdateForm
+from .forms import BaseConsoleUpdateForm, ConsoleCreateForm, ConsoleUpdateForm
 
 ##########################################################
 # BaseConsole Admin Views (Detail shows List of Consoles)
@@ -68,7 +68,7 @@ class ConsoleUpdate(IsStaff, UpdateView):
 
 class ConsoleCreate(IsStaff, CreateView):
     model = Console
-    fields = ['name', 'slug', 'edition', 'asin', 'epid', 'image', 'published']
+    form_class = ConsoleCreateForm
     template_name = 'core/create.html'
 
     def get_success_url(self):

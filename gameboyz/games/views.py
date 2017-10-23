@@ -12,8 +12,8 @@ from gameboyz.core.mixins import UserMixin
 
 from gameboyz.consoles.models import BaseConsole
 
-from .models import BaseGame, Game, GameListing
-from .forms import BaseGameUpdateForm, GameUpdateForm, GameListingUpdateForm, BraintreeSaleForm
+from .models import BaseGame, Game, GameListing, GameListingImage
+from .forms import BaseGameUpdateForm, GameUpdateForm, GameListingUpdateForm, BraintreeSaleForm, GameListingCreateForm
 
 from django.conf import settings
 
@@ -64,9 +64,18 @@ class GameDetail(UserMixin, DetailView):
 class GameListingCreate(CreateView):
     model = GameListing
     template_name = 'core/create.html'
-    fields = ['price', 'condition']
+    form_class = GameListingCreateForm
 
-    def form_valid(self, form):
+    def post(self, request, *args, **kwargs):
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        images = request.FILES.getlist('images')
+        if form.is_valid():
+            return self.form_valid(form, images)
+        else:
+            return self.form_invalid(form)
+
+    def form_valid(self, form, images):
         gamelisting = form.save(commit=False)
         queryset = Game.objects.filter(baseconsole__slug=self.kwargs.get('baseconsole_slug'), slug=self.kwargs.get('game_slug'))
         if not queryset.exists():
@@ -77,6 +86,8 @@ class GameListingCreate(CreateView):
         gamelisting.game = game
         gamelisting.user = self.request.user
         self.object = gamelisting.save()
+        for image in images:
+            GameListingImage.objects.create(image=image, gamelisting=gamelisting)
         return super().form_valid(form)
 
 class GameListingDisplay(UserMixin, DetailView):

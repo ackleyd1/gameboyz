@@ -11,11 +11,7 @@
 
     <br>
 
-    <form action="" method="post">
-      {% csrf_token %}
-      {{ form|crispy }}
-      <input type="submit" value="Save"/>
-    </form>
+    {% crispy form %}
 
   </div>
 

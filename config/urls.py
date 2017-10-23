@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^$', Home.as_view(), name='home'),
     url(r'^basegames/', include('gameboyz.games.adminurls', namespace='basegames')),
     url(r'^baseconsoles/', include('gameboyz.consoles.adminurls', namespace='baseconsoles')),
+    url(r'sales/', include('gameboyz.sales.adminurls', namespace='sales')),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^accounts/', include('allauth.urls')),
