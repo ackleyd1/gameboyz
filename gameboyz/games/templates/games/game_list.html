@@ -5,8 +5,38 @@
 {% block title %}| Games{% endblock title %}
 
 {% block content %}
-  <div class="container">
 
+<div class="row">
+  {% for game in games %}
+  <div class="col s6 m4 l3">
+    <div class="card sticky-action large">
+      <div class="card-image waves-effect waves-block waves-light">
+        {% if game.image %}
+        <img class="activator" src="{{ game.image.url }}">
+        {% else %}
+        <img class="activator" src="{% static 'core/images/default.png' %}">
+        {% endif %}
+      </div>
+      <div class="card-content">
+        <span class="card-title activator grey-text text-darken-4">{{ game.basegame.name }}<i class="material-icons right">more_vert</i></span>
+        <p class="card-text"># of Sales: {{ game.gamesale_set.count }}</p>
+        <p class="card-text">Estimated Price: <span style="color: green">${{ game.get_price|floatformat:2|intcomma }}</span></p>
+      </div>
+      <div class="card-action">
+          <a href="{{ game.get_absolute_url }}">View Listings</a>
+        </div>
+      <div class="card-reveal">
+        <span class="card-title grey-text text-darken-4">{{ game.basegame.name }}<i class="material-icons right">close</i></span>
+        <p>{{ game.basegame.summary }}</p>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% comment %}
+  <div class="container">
+    
     <p>{{ page_obj }}</p>
 
     <br>
@@ -44,6 +74,7 @@
     </div>
     {% endif %}
 
+
     <div class="row card-deck">
       {% for game in games %}
         <div class="col-6 col-sm-4 col-lg-3" style="padding: 1.5rem">
@@ -66,4 +97,5 @@
       {% endfor %}
     </div>
   </div>
+{% endcomment %}
 {% endblock content %}

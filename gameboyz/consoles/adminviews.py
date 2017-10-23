@@ -3,6 +3,7 @@ from django.core.urlresolvers import reverse, reverse_lazy
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
+
 from gameboyz.core.mixins import IsStaff
 
 from .models import BaseConsole, Console
@@ -12,13 +13,13 @@ from .forms import BaseConsoleUpdateForm, ConsoleCreateForm, ConsoleUpdateForm
 # BaseConsole Admin Views (Detail shows List of Consoles)
 ##########################################################
 
-class BaseConsoleList(IsStaff, ListView):
+class BaseConsoleListView(IsStaff, ListView):
     model = BaseConsole
     template_name = 'consoles/admin/baseconsole_list.html'
     context_object_name = 'baseconsoles'
     paginate_by = 20
 
-class BaseConsoleCreate(IsStaff, CreateView):
+class BaseConsoleCreateView(IsStaff, CreateView):
     model = BaseConsole
     template_name = 'core/create.html'
     fields = '__all__'
@@ -26,13 +27,13 @@ class BaseConsoleCreate(IsStaff, CreateView):
     def get_success_url(self):
       return reverse('baseconsoles:detail', kwargs={'baseconsole_pk': self.object.pk})
 
-class BaseConsoleDetail(IsStaff, DetailView):
+class BaseConsoleDetailView(IsStaff, DetailView):
     model = BaseConsole
     template_name = 'consoles/admin/baseconsole.html'
     context_object_name = 'baseconsole'
     pk_url_kwarg = 'baseconsole_pk'
 
-class BaseConsoleUpdate(IsStaff, UpdateView):
+class BaseConsoleUpdateView(IsStaff, UpdateView):
     model = BaseConsole
     template_name = 'core/update.html'
     form_class = BaseConsoleUpdateForm
@@ -41,7 +42,7 @@ class BaseConsoleUpdate(IsStaff, UpdateView):
     def get_success_url(self):
         return reverse('baseconsoles:detail', kwargs={'baseconsole_pk': self.object.pk})
 
-class BaseConsoleDelete(IsStaff, DeleteView):
+class BaseConsoleDeleteView(IsStaff, DeleteView):
     model = BaseConsole
     template_name = 'core/delete.html'
     success_url = reverse_lazy('baseconsoles:list')
@@ -51,13 +52,13 @@ class BaseConsoleDelete(IsStaff, DeleteView):
 # Console Admin Views
 ##########################################################
 
-class ConsoleDetail(IsStaff, DetailView):
+class ConsoleDetailView(IsStaff, DetailView):
     model = Console
     template_name = 'consoles/admin/console.html'
     context_object_name = 'console'
     pk_url_kwarg = 'console_pk'
 
-class ConsoleUpdate(IsStaff, UpdateView):
+class ConsoleUpdateView(IsStaff, UpdateView):
     model = Console
     template_name = 'core/update.html'
     form_class = ConsoleUpdateForm
@@ -66,7 +67,7 @@ class ConsoleUpdate(IsStaff, UpdateView):
     def get_success_url(self):
         return reverse('baseconsoles:consoles-detail', kwargs={'baseconsole_pk': self.object.baseconsole.pk, 'console_pk': self.object.pk})
 
-class ConsoleCreate(IsStaff, CreateView):
+class ConsoleCreateView(IsStaff, CreateView):
     model = Console
     form_class = ConsoleCreateForm
     template_name = 'core/create.html'
@@ -80,7 +81,7 @@ class ConsoleCreate(IsStaff, CreateView):
         self.object = console.save()
         return super().form_valid(form)
 
-class ConsoleDelete(IsStaff, DeleteView):
+class ConsoleDeleteView(IsStaff, DeleteView):
     model = Console
     template_name = 'core/delete.html'
     pk_url_kwarg = 'console_pk'

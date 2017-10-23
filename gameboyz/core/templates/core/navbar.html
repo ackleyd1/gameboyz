@@ -1,102 +1,75 @@
 <!DOCTYPE html>
 {% load static %}
-{% load crispy_forms_tags %}
 
-<nav class="navbar navbar-toggleable-md navbar-inverse">
-  <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="nav navbar-nav">
-      <li class="nav-item">
-        <a href="{% url 'home' %}" class="nav-link">Home</a>
-      </li>
-      {% if request.user.is_authenticated %}
-      <li class="nav-item">
-        <a href="{% url 'collection' username=request.user.username %}" class="nav-link">Profile</a>
-      </li>
-      {% endif %}
-      {% if request.user.is_staff %}
-      <li class="nav-item">
-        <a href="{% url 'basegames:list' %}" class="nav-link">Games admin</a>
-      </li>
-      <li class="nav-item">
-        <a href="{% url 'baseconsoles:list' %}" class="nav-link">Consoles admin</a>
-      </li>
-      {% endif %}
-    </ul>
-    {% if search %}
-      <form class="form-inline my-2 my-lg-0" method="get" action=".">
-        <input class="form-control mr-sm-2" type="text" name="q" placeholder="Search">
-        <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
-      </form>
-      &nbsp;
-    {% endif %}
-    {% if user_enabled %}
-      {% if request.user.is_authenticated %}
-      <form class="form-inline my-2 my-lg-0" method="post" action="{% url 'account_logout' %}">
-        {% csrf_token %}
-        <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Logout</button>
-      </form>
-      {% else %}
-      <button type="button" class="btn btn-outline-primary my-2 my-sm-0" data-toggle="modal" data-target="#LoginModal">Login</button>
-      &nbsp;
-      <button type="button" class="btn btn-outline-primary my-2 my-sm-0" data-toggle="modal" data-target="#SignupModal">Signup</button>
-      {% endif %}
-    {% endif %}
-  </div>
-  <a class="navbar-brand" href="{% url 'home' %}">
-    <img src="{% static 'core/images/logo_white.png' %}" height="40" class="d-inline-block align-top img-responsive" alt="gameboyz icon">
-  </a>
-  <div class="navbar-collapse collapse">
-    <ul class="nav navbar-nav ml-auto">
-      <li class="nav-item">
-        <a class="nav-link" href="#">About</a>
-      </li>
-    </ul>
+<nav>
+  <div class="nav-wrapper">
+    <a href="{% url 'home' %}" class="brand-logo center"><img class="responsive-img" src="{% static 'core/images/logo_white.png' %}" alt="gameboyz icon"></a>
+    <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+      <ul class="left hide-on-med-and-down">
+        <li><a href="{% url 'home' %}">Home</a></li>
+        <li><a class="dropdown-button" data-activates="platform-dropdown">Platforms<i class="material-icons right">arrow_drop_down</i></a></li>
+      </ul>
+      <ul class="right hide-on-med-and-down">
+        {% if request.user.is_staff %}
+        <li><a class="dropdown-button" data-activates="admin-dropdown">Administration<i class="material-icons right">arrow_drop_down</i></a></li>
+        {% endif %}
+        {% if request.user.is_authenticated %}
+        <li><a href="{% url 'collection' username=request.user.username %}">Profile</a></li>
+        <li>
+          <form method="post" action="{% url 'account_logout' %}">
+            {% csrf_token %}
+            <button class="btn-flat white-text" type="submit">Logout</button>
+          </form>
+        </li>
+        {% else %}
+        <li><button data-target="login-modal" class="btn-flat modal-trigger white-text">Login / Sign Up</button></li>
+        {% endif %}
+      </ul>
+      <ul class="side-nav" id="mobile-demo">
+        <li><a href="{% url 'home' %}">Home</a></li>
+      </ul>
   </div>
 </nav>
 
-{% if user_enabled %}
-  {% if not request.user.is_authenticated %}
-  <div class="modal fade" id="LoginModal" tabindex="-1" role="dialog" aria-labelledby="LoginModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="LoginModalLabel">LOG IN</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <form method="post" action="{% url 'account_login' %}">
-            {% csrf_token %}
-            {{ login_form|crispy }}
-            <input type="submit" value="Submit" class="btn btn-success">
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
+<ul id="admin-dropdown" class="dropdown-content">
+  <li><a href="{% url 'basegames:list' %}">Games</a></li>
+  <li><a href="{% url 'baseconsoles:list' %}">Consoles</a></li>
+  <li><a href="{% url 'sales:overview' %}">Sales</a></li>
+</ul>
 
-  <div class="modal fade" id="SignupModal" tabindex="-1" role="dialog" aria-labelledby="SignupModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="SignupModalLabel">Signup</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <form method="post" action="{% url 'account_signup' %}">
-            {% csrf_token %}
-            {{ signup_form|crispy }}
-            <input type="submit" value="Submit" class="btn btn-success">
-          </form>
-        </div>
+{% if request.user.is_staff %}
+<ul id="admin-dropdown" class="dropdown-content">
+  <li><a href="{% url 'basegames:list' %}">Games</a></li>
+  <li><a href="{% url 'baseconsoles:list' %}">Consoles</a></li>
+  <li><a href="{% url 'sales:overview' %}">Sales</a></li>
+</ul>
+{% endif %}
+
+{% if not request.user.is_authenticated %}
+<div id="login-modal" class="modal">
+  <div class="modal-content">
+    <div class="row">
+      <div class="col s12">
+        <ul class="tabs">
+          <li class="tab col s6"><a class="active" href="#login">Login</a></li>
+          <li class="tab col s6"><a href="#signup">Sign up</a></li>
+        </ul>
+      </div>
+      <div id="login" class="col s12">
+        <form method="post" action="{% url 'account_login' %}">
+          {% csrf_token %}
+          {{ login_form.as_p }}
+          <input type="submit" value="Submit" class="btn btn-success">
+        </form>
+      </div>
+      <div id="signup" class="col s12">
+        <form method="post" action="{% url 'account_signup' %}">
+          {% csrf_token %}
+          {{ signup_form.as_p }}
+          <input type="submit" value="Submit" class="btn btn-success">
+        </form>
       </div>
     </div>
   </div>
-  {% endif %}
+</div>
 {% endif %}

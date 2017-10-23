@@ -6,32 +6,4 @@
 
 {% block content %}
 
-<nav class="navbar navbar-toggleable-md navbar-light bg-faded">
-  <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarnav" aria-controls="navbarnav" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarnav">
-    <ul class="navbar-nav">
-      {% for baseconsole in baseconsoles %}
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="{% url 'overview' baseconsole_slug=baseconsole.slug%}" id="{{ baseconsole.slug }}Menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          {{ baseconsole.name }}
-        </a>
-        <div class="dropdown-menu" aria-labelledby="{{ baseconsole.slug }}Menu">
-          <a class="dropdown-item" href="{% url 'consoles' baseconsole_slug=baseconsole.slug %}">Consoles</a>
-          <a class="dropdown-item" href="{% url 'games' baseconsole_slug=baseconsole.slug %}">Games</a>
-          <a class="dropdown-item" href="#">Accessories</a>
-        </div>
-      </li>
-      {% endfor %}
-    </ul>
-  </div>
-</nav>
-
-  <div class="container-fluid">
-    <div class="row">
-        <h1 style="font-family: 'Maven Pro', sans-serif;">TAKE BACK GAMING</h1>
-    </div>
-  </div>
-
 {% endblock content %}

@@ -7,14 +7,9 @@ from gameboyz.consoles.models import BaseConsole, Console
 from gameboyz.games.models import Game, GameListing
 
 from .mixins import UserMixin
-from .forms import CrispyLoginForm, CrispySignupForm
 
-class Home(UserMixin, TemplateView):
-    """
-    HomeView for the website.
-    **Template:**
-    :template:`core/home.html`
-    """
+class HomeView(UserMixin, TemplateView):
+    """HomeView for the website."""
     template_name = 'core/home.html'
 
     def get_context_data(self, *args, **kwargs):
@@ -22,7 +17,7 @@ class Home(UserMixin, TemplateView):
         context['baseconsoles'] = BaseConsole.objects.all()
         return context
 
-class BaseConsoleOverview(UserMixin, TemplateView):
+class BaseConsoleOverviewView(UserMixin, TemplateView):
     """
     Overview for a gaming platform
     **Template:**
@@ -36,7 +31,7 @@ class BaseConsoleOverview(UserMixin, TemplateView):
         context['consoles'] = Console.objects.all()
         return context
 
-class UserCollection(UserMixin, DetailView):
+class UserCollectionView(UserMixin, DetailView):
     """
     UserCollectionView to view users listed games, consoles, and accessories
     **Template**

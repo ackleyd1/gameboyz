@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 {% extends 'core/base.html' %}
 {% load static %}
-{% load crispy_forms_tags %}
 
 {% block title %}| Create{% endblock title %}
 
@@ -11,7 +10,7 @@
 
     <br>
 
-    {% crispy form %}
+    {{ form.as_p }}
 
   </div>
 

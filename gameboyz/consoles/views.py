@@ -8,12 +8,11 @@ from gameboyz.core.mixins import UserMixin
 
 from .models import Console
 
-class ConsoleList(UserMixin, ListView):
+class ConsoleListView(UserMixin, ListView):
     model = Console
     template_name = 'consoles/console_list.html'
     context_object_name = 'consoles'
     paginate_by = 20
-    # queryset = Console.objects.all().annotate(consolesale_count=Count('consolesale')).order_by('-consolesale_count')
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)

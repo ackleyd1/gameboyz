@@ -22,8 +22,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['dev.ravedave.co', 'www.dev.ravedave.co']
 
-# Application definition
-
 LOCAL_APPS = [
     'gameboyz.core',
     'gameboyz.consoles',
@@ -35,7 +33,6 @@ LOCAL_APPS = [
 DJANGO_APPS = [
     'django.contrib.humanize',
     'django.contrib.admin',
-    'django.contrib.admindocs',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -49,15 +46,12 @@ THIRD_PARTY_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'crispy_forms',
     'django_celery_beat',
     'django_celery_results',
     'debug_toolbar',
 ]
 
 INSTALLED_APPS = LOCAL_APPS + DJANGO_APPS + THIRD_PARTY_APPS
-
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 LOGIN_REDIRECT_URL = '/gameboyz'
 LOGIN_URL = '/gameboyz'
@@ -84,17 +78,15 @@ EMAIL_PORT = 587
 EMAIL_USER_TLS = False
 
 MIDDLEWARE = [
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
-INTERNAL_IPS = ['104.131.20.104',]
 
 ROOT_URLCONF = 'config.urls'
 
@@ -190,10 +182,11 @@ BRAINTREE_MERCHANT_ID = get_env_variable("BRAINTREE_MERCHANT_ID")
 BRAINTREE_PUBLIC_KEY = get_env_variable("BRAINTREE_PUBLIC_KEY")
 BRAINTREE_PRIVATE_KEY = get_env_variable("BRAINTREE_PRIVATE_KEY")
 
-# REST_FRAMEWORK = {
-#     # Use Django's standard `django.contrib.auth` permissions,
-#     # or allow read-only access for unauthenticated users.
-#     'DEFAULT_PERMISSION_CLASSES': [
-#         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-#     ]
-# }
+def show_toolbar(request):
+    if request.user and request.user.username == 'ravedave':
+        return True
+    return False
+
+DEBUG_TOOLBAR_CONFIG = {
+    'SHOW_TOOLBAR_CALLBACK': 'config.settings.show_toolbar',
+}

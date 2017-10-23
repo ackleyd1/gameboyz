@@ -18,6 +18,9 @@ class BaseConsole(TimeStampedModel):
         self.slug = slugify(self.name)
         super(BaseConsole, self).save(*args, **kwargs)
 
+    def get_absolute_url(self):
+        return reverse('games', kwargs={'baseconsole_slug': self.baseconsole.slug})
+
 class Console(TimeStampedModel):
     """Stores information on Console product releases. Related to :model:`consoles.BaseConsole`"""
     baseconsole = models.ForeignKey(BaseConsole)
