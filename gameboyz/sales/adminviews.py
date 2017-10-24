@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.db.models import Avg, Count, Sum, Max, Min, Sum
 
-from gameboyz.core.mixins import IsStaff
+from gameboyz.core.mixins import StaffRequiredMixin
 
 from gameboyz.games.models import Game
 from gameboyz.consoles.models import Console
@@ -25,7 +25,7 @@ MONTHS = {
     'December' : 12,
 }
 
-class SaleSummaryView(IsStaff, TemplateView):
+class SaleSummaryView(StaffRequiredMixin, TemplateView):
     template_name = 'sales/admin/summary.html'
 
     def get_context_data(self, *args, **kwargs):

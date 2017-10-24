@@ -18,8 +18,11 @@ class BaseConsole(TimeStampedModel):
         self.slug = slugify(self.name)
         super(BaseConsole, self).save(*args, **kwargs)
 
+    def get_absolute_url(self):
+        return reverse('overview', kwargs={'baseconsole_slug': self.slug})
+
 class Console(TimeStampedModel):
-    """Stores information on Console product releases. Related to :model:`consoles.BaseConsole`"""
+    """Stores information on Console product releases."""
     baseconsole = models.ForeignKey(BaseConsole)
     slug = models.SlugField(db_index=True, max_length=128)
     edition = models.CharField(max_length=32, default="Original")

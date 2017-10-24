@@ -4,58 +4,42 @@
 {% block content %}
   <div class="container">
 
-    <br>
+    <h1>{{ baseconsole }} Games</h1>
 
-    <div class="row" style="justify-content: center">
-      <br>
-      <h1>GAMES</h1>
+    {% for game in games %}
+    {% if forloop.first %}<div class="card-deck my-4">{% endif %}
+    <div class="card">
+      {% if game.image %}
+      <img class="card-img-top" src="{{ game.image.url }}" alt="Card image cap">
+      {% else %}
+      <img class="card-img-top" src="{% static 'core/images/default.png' %}" alt="Card image cap">
+      {% endif %}
+      <div class="card-body">
+        <h4 class="card-title text-center">{{ game.basegame.name }}</h4>
+      </div>
+      <div class="card-footer text-center">
+        <a href="{{ game.get_absolute_url }}" class="card-link">View More</a>
+      </div>
     </div>
+    {% if forloop.counter|divisibleby:4 %}</div><div class="card-deck my-4">{% endif %}
+    {% if forloop.last %}</div>{% endif %}
+    {% endfor %}
 
-    <div class="row card-deck">
-      {% for game in games %}
-        <div class="col-6 col-sm-4 col-lg-3" style="padding: 1.5rem">
-          <div class="card">
-            {% if game.image %}
-              <img class="card-img-top" style="width: 100%" src="{{ game.image.url }}" alt="{{ game.basegame.name }}">
-            {% else %}
-              <img class="card-img-top" style="width: 100%" src="{% static 'core/images/default.png' %}" alt="Default image">
-            {% endif %}
-            <div class="card-block">
-              <h4 class="card-title text-center">{{ game.basegame.name }}</h4>
-              <p class="card-text hidden-md-down">{{ game.console }}</p>
-            </div>
-            <div class="card-footer text-center">
-              <a href="{{ game.get_absolute_url }}" class="card-link">View More</a>
-            </div>
-          </div>
-        </div>
-      {% endfor %}
-    </div>
+    <h1>{{ baseconsole }} Consoles</h1>
 
-    <div class="row" style="justify-content: center">
-      <br>
-      <h1>CONSOLES</h1>
+    {% for console in consoles %}
+    {% if forloop.first %}<div class="card-deck my-4">{% endif %}
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title text-center">{{ console.baseconsole.name }} {{ console.edition }}</h4>
+      </div>
+      <div class="card-footer text-center">
+        <a href="" class="card-link">View More</a>
+      </div>
     </div>
+    {% if forloop.counter|divisibleby:2 %}</div><div class="card-deck my-4">{% endif %}
+    {% if forloop.last %}</div>{% endif %}
+    {% endfor %}
 
-    <div class="row card-deck">
-      {% for console in consoles %}
-        <div class="col-6 col-sm-4 col-lg-3" style="padding: 1.5rem">
-          <div class="card">
-            {% if console.image %}
-              <img class="card-img-top" style="width: 100%" src="{{ console.image.url }}" alt="{{ baseconsole.name }}">
-            {% else %}
-              <img class="card-img-top" style="width: 100%" src="{% static 'core/images/default.png' %}" alt="Default image">
-            {% endif %}
-            <div class="card-block">
-              <h4 class="card-title text-center">{{ console.edition }}</h4>
-              <p class="card-text hidden-md-down"></p>
-            </div>
-            <div class="card-footer text-center">
-              <a href="{{ console.get_absolute_url }}" class="card-link">View More</a>
-            </div>
-          </div>
-        </div>
-      {% endfor %}
-    </div>
   </div>
 {% endblock content %}

@@ -3,7 +3,6 @@ from django.conf.urls import url, include
 from django.contrib import admin
 
 from gameboyz.core.views import HomeView, UserCollectionView, BaseConsoleOverviewView
-
 from gameboyz.games.views import GameListView, GameDetailView, GameListingDetailView, GameListingCreateView, GameListingUpdateView, GameListingDeleteView
 from gameboyz.consoles.views import ConsoleListView
 
@@ -61,7 +60,6 @@ urlpatterns = [
         name='consoles'
     ),
     # Accessory urls
-
 ]
 
 if settings.DEBUG:
