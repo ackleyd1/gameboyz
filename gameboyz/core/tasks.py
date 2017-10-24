@@ -7,15 +7,24 @@ from django.conf import settings
 from gameboyz.games.models import Game
 from gameboyz.sales.models import GameSale
 
-from celery import shared_task
+from celery.task.schedules import crontab
+from celery.decorators import periodic_task
+from celery.utils.log import get_task_logger
+
 from ebaysdk.exception import ConnectionError
 from ebaysdk.finding import Connection
 
-@shared_task(name='updatesales')
+logger = get_task_logger(__name__)
+
+@periodic_task(
+    run_every=(crontab(minute=0, hour=0)),
+    name="updatesales",
+)
 def updatesales():
     """
-    Celery task that loops through our :model:`games.Game` and uses the ebay finding API: https://developer.ebay.com/devzone/finding/callref/findCompletedItems.html and the ebay python SDK: https://github.com/timotheus/ebaysdk-python/ to create sales with :model:`sales.GameSale`
+    Celery task that loops through our games and uses the ebay finding API: https://developer.ebay.com/devzone/finding/callref/findCompletedItems.html and the ebay python SDK: https://github.com/timotheus/ebaysdk-python/ to gather sales data
     """
+    count = 0
     for game in Game.objects.all():
         try:
             api = Connection(appid=settings.EBAY_APP_ID, config_file=None)
@@ -34,5 +43,7 @@ def updatesales():
                                 price=item['sellingStatus']['convertedCurrentPrice']['value'],
                                 sold=dateutil.parser.parse(item['listingInfo']['endTime'])
                             )
+                            count += 1
         except ConnectionError as e:
             continue
+    logger.info("Games Sales tracked: %s" % count)

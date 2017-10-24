@@ -171,7 +171,6 @@ STATIC_ROOT = PROJECT_DIR.child('static')
 MEDIA_URL = 'http://dev.ravedave.co/gameboyz/media/'
 MEDIA_ROOT = PROJECT_DIR.child('media')
 
-
 BROKER_URL = 'redis://localhost:6379/0'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 CELERY_ACCEPT_CONTENT = ['json']
