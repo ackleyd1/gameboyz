@@ -62,6 +62,9 @@ class Game(TimeStampedModel):
     def get_absolute_url(self):
         return reverse('games-detail', kwargs={'baseconsole_slug': self.baseconsole.slug, 'game_slug': self.slug})
 
+    def get_admin_url(self):
+        return reverse('basegames:games-detail', kwargs={'basegame_pk': self.basegame.pk, 'game_pk': self.pk})
+
     def get_price(self):
         if self.gamesale_set.count() == 0:
             return None

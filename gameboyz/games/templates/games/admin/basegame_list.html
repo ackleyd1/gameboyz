@@ -74,6 +74,14 @@
   </div>
   {% endif %}
 
+  {% if request.GET.q %}
+  <div class="row">
+    <div class="col-4 offset-4 text-center">
+      <a class="btn btn-primary" href=".">Clear query</a>
+    </div>
+  </div>
+  {% endif %}
+
   {% for basegame in basegames %}
   {% if forloop.first %}<div class="card-deck my-4">{% endif %}
   <div class="card">

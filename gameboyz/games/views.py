@@ -29,7 +29,7 @@ class GameListView(UserMixin, ListView):
     template_name = 'games/game_list.html'
     context_object_name = 'games'
     paginate_by = 20
-    queryset = Game.objects.all().annotate(gamesale_count=Count('gamesale')).order_by('-gamesale_count')
+    queryset = Game.objects.all().select_related('basegame').prefetch_related('gamesale_set').select_related('baseconsole').annotate(gamesale_count=Count('gamesale')).order_by('-gamesale_count')
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -131,13 +131,13 @@ class GameListingSaleView(SingleObjectMixin, FormView):
 
 class GameListingDetailView(View):
     def get(self, request, *args, **kwargs):
-        view = GameListingDisplay.as_view()
+        view = GameListingDisplayView.as_view()
         return view(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         if not self.request.user.is_authenticated:
             raise PermissionDenied
-        view = GameListingSale.as_view()
+        view = GameListingSaleView.as_view()
         return view(request, *args, **kwargs)
 
 class GameListingUpdateView(UserMixin, UpdateView):
