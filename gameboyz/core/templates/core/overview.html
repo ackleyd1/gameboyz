@@ -1,42 +1,47 @@
 {% extends "core/base.html" %}
 {% load static %}
+{% load humanize %}
 
 {% block content %}
   <div class="container">
 
-    <br>
-
-    <div class="row" style="justify-content: center">
-      <br>
-      <h1>GAMES</h1>
+    <div class="row center-align">
+      <h1>{{ baseconsole }} Games</h1>
     </div>
 
-    <div class="row card-deck">
+    <div class="row">
       {% for game in games %}
-        <div class="col-6 col-sm-4 col-lg-3" style="padding: 1.5rem">
-          <div class="card">
+      <div class="col s12 m6 l4">
+        <div class="card sticky-action medium">
+          <div class="card-image waves-effect waves-block waves-light">
             {% if game.image %}
-              <img class="card-img-top" style="width: 100%" src="{{ game.image.url }}" alt="{{ game.basegame.name }}">
+            <img class="activator" src="{{ game.image.url }}">
             {% else %}
-              <img class="card-img-top" style="width: 100%" src="{% static 'core/images/default.png' %}" alt="Default image">
+            <img class="activator" src="{% static 'core/images/default.png' %}">
             {% endif %}
-            <div class="card-block">
-              <h4 class="card-title text-center">{{ game.basegame.name }}</h4>
-              <p class="card-text hidden-md-down">{{ game.console }}</p>
+          </div>
+          <div class="card-content">
+            <span class="card-title activator grey-text text-darken-4">{{ game.basegame.name }}<i class="material-icons right">more_vert</i></span>
+            <p class="card-text"># of Sales: {{ game.gamesale_set.count }}</p>
+            <p class="card-text">Estimated Price: <span class="cash">${{ game.get_price|floatformat:2|intcomma }}</span></p>
+          </div>
+          <div class="card-action">
+              <a href="{{ game.get_absolute_url }}">View Listings</a>
             </div>
-            <div class="card-footer text-center">
-              <a href="{{ game.get_absolute_url }}" class="card-link">View More</a>
-            </div>
+          <div class="card-reveal">
+            <span class="card-title grey-text text-darken-4">{{ game.basegame.name }}<i class="material-icons right">close</i></span>
+            <p>{{ game.basegame.summary }}</p>
           </div>
         </div>
+      </div>
       {% endfor %}
     </div>
 
-    <div class="row" style="justify-content: center">
-      <br>
-      <h1>CONSOLES</h1>
+    <div class="row center-align">
+      <h1>{{ baseconsole }} Consoles</h1>
     </div>
 
+    {% comment %}
     <div class="row card-deck">
       {% for console in consoles %}
         <div class="col-6 col-sm-4 col-lg-3" style="padding: 1.5rem">
@@ -57,5 +62,6 @@
         </div>
       {% endfor %}
     </div>
+    {% endcomment %}
   </div>
 {% endblock content %}

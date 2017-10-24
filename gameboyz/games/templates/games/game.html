@@ -12,43 +12,75 @@
 {% endblock head %}
 
 {% block content %}
-  <br>
 
-  <div class="container">
-    <div class="row">
-      <div class="col-4">
-        {% if game.image %}
-          <img class="img-responsive" style="width: 100%" src="{{ game.image.url }}" alt="{{ game.basegame.name }}">
-        {% else %}
-          <img class="img-responsive" style="width: 100%" src="{% static 'core/images/default.png' %}" alt="Default image">
-        {% endif %}
-      </div>
-      <div class="col-8">
+<div class="container">
 
-        <p>{{ game.basegame.name }}</p>
+  <div class="row">
 
-        <p>{{ game.baseconsole }}</p>
-
-        <p>{{ game.basegame.summary }}</p>
-
-        {% if request.user.is_superuser %}
-        <p><a href="{% url 'basegames:games-detail' basegame_pk=game.basegame.pk game_pk=game.pk %}">View Admin page</a></p>
-        {% endif %}
-
-        <p><a href="{% url 'gamelistings-create' baseconsole_slug=view.kwargs.baseconsole_slug game_slug=view.kwargs.game_slug %}">Add to your collection</a></p>
-
-      </div>
+    <div class="col l4 m12 center-align">
+    {% if game.image %}
+      <img class="responsive-img" src="{{ game.image.url }}" alt="{{ game }}">
+    {% else %}
+      <img class="responsive-img" src="{% static 'core/images/default.png' %}" alt="Default image">
+    {% endif %}
     </div>
 
-    <hr style="border-color:black;">
+    <div class="col l8 m12">
 
-    <br>
+      {% if request.user.is_superuser %}
+      <h2><a href="{{ game.get_admin_url }}">{{ game }}</a> <span class="chip">New</span></h2>
+      {% else %}
+      <h2>{{ game }} <span class="chip">New</span></h2>
+      {% endif %}
 
-    <div class="row" style="justify-content: center">
-      <br>
-      <h1>LISTINGS</h1>
+      <p>Released for the {{ game.baseconsole }}</p>
+
+      <p>Estimated price: <span class="cash">${{ game.get_price|floatformat:2|intcomma }}</span></p>
+
+      <p>{{ game.basegame.summary }}</p>
+
+      {% if request.user.is_authenticated %}
+        <p><a class="btn" href="{% url 'gamelistings-create' baseconsole_slug=view.kwargs.baseconsole_slug game_slug=view.kwargs.game_slug %}">Add to your collection</a></p>
+      {% else %}
+        <p><a class="btn" href="{% url 'account_login' %}">Add to your collection</a></p>
+      {% endif %}
+
     </div>
 
+  </div>
+
+  <hr>
+
+  <div class="row center-align">
+    <h3>LISTINGS</h3>
+  </div>
+
+  <div class="row">
+      {% for gamelisting in game.gamelisting_set.all %}
+      <div class="col s12 m6 l4">
+        <div class="card sticky-action medium">
+          <div class="card-image">
+            {% if gamelisting.gamelistingimage_set.first %}
+            <img src="{{ gamelisting.gamelistingimage_set.first.image.url }}">
+            {% else %}
+            <img src="{% static 'core/images/default.png' %}">
+            {% endif %}
+          </div>
+          <div class="card-content">
+            <p class="card-text">{{ gamelisting.price }}</p>
+            <p class="card-text">{{ gamelisting.user }} | {{ gamelisting.condition }}</p>
+          </div>
+          <div class="card-action">
+            <a href="{{ gamelisting.get_absolute_url }}">View More</a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+</div>
+
+  {% comment %}
     <div class="row card-deck">
       {% for gamelisting in game.gamelisting_set.all %}
         <div class="col-6 col-sm-4 col-lg-3" style="padding: 1.5rem">
@@ -70,4 +102,5 @@
       {% endfor %}
     </div>
   </div>
+  {% endcomment %}
 {% endblock content %}

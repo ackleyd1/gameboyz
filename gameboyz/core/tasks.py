@@ -11,6 +11,10 @@ from celery import shared_task
 from ebaysdk.exception import ConnectionError
 from ebaysdk.finding import Connection
 
+@shared_task
+def test(param):
+    return 'The test task executed with argument "%s" ' % param
+
 @shared_task(name='updatesales')
 def updatesales():
     """

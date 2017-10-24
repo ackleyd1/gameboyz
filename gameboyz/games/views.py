@@ -131,13 +131,13 @@ class GameListingSaleView(SingleObjectMixin, FormView):
 
 class GameListingDetailView(View):
     def get(self, request, *args, **kwargs):
-        view = GameListingDisplay.as_view()
+        view = GameListingDisplayViewre.as_view()
         return view(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         if not self.request.user.is_authenticated:
             raise PermissionDenied
-        view = GameListingSale.as_view()
+        view = GameListingSaleView.as_view()
         return view(request, *args, **kwargs)
 
 class GameListingUpdateView(UserMixin, UpdateView):

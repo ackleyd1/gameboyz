@@ -6,96 +6,34 @@
 
 {% block content %}
 
-<div class="row">
-  {% for game in games %}
-  <div class="col s6 m4 l3">
-    <div class="card sticky-action large">
-      <div class="card-image waves-effect waves-block waves-light">
-        {% if game.image %}
-        <img class="activator" src="{{ game.image.url }}">
-        {% else %}
-        <img class="activator" src="{% static 'core/images/default.png' %}">
-        {% endif %}
-      </div>
-      <div class="card-content">
-        <span class="card-title activator grey-text text-darken-4">{{ game.basegame.name }}<i class="material-icons right">more_vert</i></span>
-        <p class="card-text"># of Sales: {{ game.gamesale_set.count }}</p>
-        <p class="card-text">Estimated Price: <span style="color: green">${{ game.get_price|floatformat:2|intcomma }}</span></p>
-      </div>
-      <div class="card-action">
-          <a href="{{ game.get_absolute_url }}">View Listings</a>
+<div class="container">
+  <div class="row">
+    {% for game in games %}
+    <div class="col s12 m6 l4">
+      <div class="card sticky-action medium">
+        <div class="card-image waves-effect waves-block waves-light">
+          {% if game.image %}
+          <img class="activator" src="{{ game.image.url }}">
+          {% else %}
+          <img class="activator" src="{% static 'core/images/default.png' %}">
+          {% endif %}
         </div>
-      <div class="card-reveal">
-        <span class="card-title grey-text text-darken-4">{{ game.basegame.name }}<i class="material-icons right">close</i></span>
-        <p>{{ game.basegame.summary }}</p>
+        <div class="card-content">
+          <span class="card-title activator grey-text text-darken-4">{{ game.basegame.name }}<i class="material-icons right">more_vert</i></span>
+          <p class="card-text"># of Sales: {{ game.gamesale_set.count }}</p>
+          <p class="card-text">Estimated Price: <span style="color: green">${{ game.get_price|floatformat:2|intcomma }}</span></p>
+        </div>
+        <div class="card-action">
+            <a href="{{ game.get_absolute_url }}">View Listings</a>
+          </div>
+        <div class="card-reveal">
+          <span class="card-title grey-text text-darken-4">{{ game.basegame.name }}<i class="material-icons right">close</i></span>
+          <p>{{ game.basegame.summary }}</p>
+        </div>
       </div>
     </div>
+    {% endfor %}
   </div>
-  {% endfor %}
 </div>
 
-{% comment %}
-  <div class="container">
-    
-    <p>{{ page_obj }}</p>
-
-    <br>
-
-    {% if is_paginated %}
-    <nav>
-      <ul class="pagination justify-content-center">
-        {% if page_obj.has_previous %}
-          <li class="page-item">
-            <a class="page-link" href="?q={{ request.GET.q }}&page={{ page_obj.previous_page_number }}" tabindex="-1">Previous</a>
-          </li>
-        {% else %}
-          <li class="page-item disabled">
-            <a class="page-link" href="" tabindex="-1">Previous</a>
-          </li>
-        {% endif %}
-        {% if page_obj.has_next %}
-          <li class="page-item">
-            <a class="page-link" href="?q={{ request.GET.q }}&page={{ page_obj.next_page_number }}">Next</a>
-          </li>
-        {% else %}
-          <li class="page-item disabled">
-            <a class="page-link" href="">Next</a>
-          </li>
-        {% endif %}
-      </ul>
-    </nav>
-    {% endif %}
-
-    {% if request.GET.q %}
-    <div class="row">
-      <div class="col-4 offset-4 text-center">
-        <a class="btn btn-primary" href="{% url 'games' baseconsole_slug=view.kwargs.baseconsole_slug %}">Clear query</a>
-      </div>
-    </div>
-    {% endif %}
-
-
-    <div class="row card-deck">
-      {% for game in games %}
-        <div class="col-6 col-sm-4 col-lg-3" style="padding: 1.5rem">
-          <div class="card">
-            {% if game.image %}
-              <img class="card-img-top" style="width: 100%" src="{{ game.image.url }}" alt="{{ game.basegame.name }}">
-            {% else %}
-              <img class="card-img-top" style="width: 100%" src="{% static 'core/images/default.png' %}" alt="Default image">
-            {% endif %}
-            <div class="card-block">
-              <h4 class="card-title text-center">{{ game.basegame.name }}</h4>
-              <p class="card-text"># of Sales: {{ game.gamesale_set.count }}</p>
-              <p class="card-text">Estimated Price: <span style="color: green">${{ game.get_price|floatformat:2|intcomma }}</span></p>
-            </div>
-            <div class="card-footer text-center">
-              <a href="{{ game.get_absolute_url }}" class="card-link">View More</a>
-            </div>
-          </div>
-        </div>
-      {% endfor %}
-    </div>
-  </div>
-{% endcomment %}
 {% endblock content %}

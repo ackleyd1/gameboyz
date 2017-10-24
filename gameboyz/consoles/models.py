@@ -19,7 +19,7 @@ class BaseConsole(TimeStampedModel):
         super(BaseConsole, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
-        return reverse('games', kwargs={'baseconsole_slug': self.baseconsole.slug})
+        return reverse('overview', kwargs={'baseconsole_slug': self.slug})
 
 class Console(TimeStampedModel):
     """Stores information on Console product releases. Related to :model:`consoles.BaseConsole`"""

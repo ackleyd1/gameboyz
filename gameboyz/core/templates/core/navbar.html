@@ -7,7 +7,6 @@
     <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
       <ul class="left hide-on-med-and-down">
         <li><a href="{% url 'home' %}">Home</a></li>
-        <li><a class="dropdown-button" data-activates="platform-dropdown">Platforms<i class="material-icons right">arrow_drop_down</i></a></li>
       </ul>
       <ul class="right hide-on-med-and-down">
         {% if request.user.is_staff %}
@@ -51,17 +50,38 @@
     <div class="row">
       <div class="col s12">
         <ul class="tabs">
-          <li class="tab col s6"><a class="active" href="#login">Login</a></li>
+          <li class="tab col s6"><a href="#login">Login</a></li>
           <li class="tab col s6"><a href="#signup">Sign up</a></li>
         </ul>
       </div>
+    </div>
+    <div class="row">
+
       <div id="login" class="col s12">
         <form method="post" action="{% url 'account_login' %}">
           {% csrf_token %}
-          {{ login_form.as_p }}
-          <input type="submit" value="Submit" class="btn btn-success">
+          <div class="input-field">
+            <i class="material-icons prefix">account_circle</i>
+            <input class="validate" type="text" name="login" id="id_login" required="" autofocus="autofocus" placeholder="Username or e-mail">
+            <label for="id_login" class="active">Login:</label>
+          </div>
+          <div class="input-field">
+            <i class="material-icons prefix">vpn_key</i>
+            <label for="id_password" class="active">Password:</label>
+            <input class="validate" type="password" name="password" id="id_password" required="" placeholder="Password">
+          </div>
+          <p>
+            <input type="checkbox" class="filled-in" id="id_remember"/>
+            <label for="id_remember">Remember Me:</label>
+          </p>
+          <div class="row center-align">
+            <button class="btn waves-effect waves-light" type="submit" name="action">Submit
+              <i class="material-icons right">send</i>
+            </button>
+          </div>
         </form>
       </div>
+
       <div id="signup" class="col s12">
         <form method="post" action="{% url 'account_signup' %}">
           {% csrf_token %}
@@ -69,7 +89,9 @@
           <input type="submit" value="Submit" class="btn btn-success">
         </form>
       </div>
+
     </div>
   </div>
 </div>
 {% endif %}
+
