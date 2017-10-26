@@ -6,21 +6,30 @@
 
 {% block content %}
 
-<div class="container">
+<div class="container pb-4">
 
-{% for baseconsole in baseconsoles %}
-{% if forloop.first %}<div class="card-deck my-4">{% endif %}
-<div class="card">
-  <div class="card-body">
-    <h4 class="card-title text-center">{{ baseconsole.name }}</h4>
+  <div class="jumbotron mt-3 text-center">
+    <h1 class="display-3">Take Back Gaming</h1>
+    <p class="lead">Search for video games for sale on our site</p>
+
+    <form class="form-inline mt-3 justify-content-center">
+      <input type="text" class="form-control" name="q" placeholder="Search for games...">
+      <select name="platform" class="form-control">
+        <option value="all" selected>All</option>
+        {% for baseconsole in baseconsoles %}
+        <option value="{{ baseconsole.slug }}">{{ baseconsole }}</option>
+        {% endfor %}
+      </select>
+      <button class="btn btn-info search-btn" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+    </form>
+
   </div>
-  <div class="card-footer text-center">
-    <a href="{{ baseconsole.get_absolute_url }}" class="card-link">View More</a>
+
+  <div class="grid">
+    {% for game in games %}
+      {% include "games/game_card.html" with game=game admin=False %}
+    {% endfor %}
   </div>
-</div>
-{% if forloop.counter|divisibleby:2 %}</div><div class="card-deck my-4">{% endif %}
-{% if forloop.last %}</div>{% endif %}
-{% endfor %}
 
 </div>
 

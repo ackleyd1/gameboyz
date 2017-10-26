@@ -4,11 +4,12 @@ from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
-from gameboyz.core.mixins import UserMixin
+from gameboyz.core.mixins import UserMixin, StaffRequiredMixin
 
 from .models import Console
 
-class ConsoleListView(UserMixin, ListView):
+class ConsoleListView(StaffRequiredMixin, UserMixin, ListView):
+    """View that will list available consoles. Restricted to staff for development purposes."""
     model = Console
     template_name = 'consoles/console_list.html'
     context_object_name = 'consoles'

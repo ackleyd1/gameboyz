@@ -32,7 +32,7 @@
       {% if request.user.is_authenticated %}
         <p><a class="btn btn-info" href="{% url 'gamelistings-create' baseconsole_slug=view.kwargs.baseconsole_slug game_slug=view.kwargs.game_slug %}">Add to your collection</a></p>
       {% else %}
-        <p><a href="{% url 'login' %}">Add to your collection</a></p>
+        <p><a href="{% url 'account_login' %}">Add to your collection</a></p>
       {% endif %}
 
     </div>

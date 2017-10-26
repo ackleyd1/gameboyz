@@ -11,59 +11,101 @@
 
 {% block content %}
 
-  <div class="summary container-fluid">
-    <div class="row">
-      <div class="col-6 offset-3">
-        <div class="card total">
-          <div class="card-block">
-            There are a total of <strong>{{ gamesales.game__count }}</strong> games in the database
-          </div>
-        </div>
+  <div class="container">
+
+    <div class="jumbotron mt-3 text-center">
+      <h1 class="display-3"><span class="cash">${{ gamesales.price__sum | floatformat:2 | intcomma }}</span></h1>
+      <p class="lead">from {{ gamesales.price__count | intcomma }} sales on {{ gamesales.game__count | intcomma }} game titles on eBay since {{ gamesales.sold__min | date:"M d Y" }}</p>
+    </div>
+
+    <div class="row my-2 my-md-5">
+      <div class="col-12 col-md-10 offset-md-1">
+        <canvas id="months"></canvas>
       </div>
     </div>
 
-    <div class="row">
-      <div class="col-4">
-        <div class="card total">
-          <div class="card-block">
-            
-          </div>
-        </div>
-      </div>
+    <div class="jumbotron text-center">
+      <h1 class="display-3"><span class="cash">${{ gamesales.price__avg | floatformat:2 | intcomma }}</span></h1>
+      <p class="lead">Average price per game</p>
     </div>
 
-
-        
-        <div class="col-6">
-          <p>Games: </p>
-          <p>Game Sales Count (eBay): {{ gamesales.price__count | intcomma }}</p>
-          <p>Game Sales Sum: ${{ gamesales.price__sum | floatformat:2 | intcomma }}</p>
-          <p>Game Sales Max Price: ${{ gamesales.price__max | floatformat:2 | intcomma }}</p>
-          <p>Game Sale Min Price: ${{ gamesales.price__min | floatformat:2 | intcomma }}</p>
-          <p>Game Sale Avg Price: ${{ gamesales.price__avg | floatformat:2 | intcomma }}</p>
-          <p>Earliest Game Sale Sold: {{ gamesales.sold__min }}</p>
-          <p>Earliest Game Sale Created: {{ gamesales.created__min }}</p>
-          {% for game_month in gamesales.months %}
-          {% if game_month.total %}
-          <p>{{ game_month.name }} : ${{ game_month.total | floatformat:2 | intcomma }}</p>
-          {% endif %}
-          {% endfor %}
-        </div>
-        <div class="col-6">
-          <p>Consoles: {{ consolesales.console__count }}</p>
-          <p>Console Sales Count (eBay): {{ consolesales.price__count | intcomma }}</p>
-          <p>Console Sales Sum: ${{ consolesales.price__sum | floatformat:2 | intcomma }}</p>
-          <p>Console Sales Max Price: ${{ consolesales.price__max | floatformat:2 | intcomma }}</p>
-          <p>Console Sale Min Price: ${{ consolesales.price__min | floatformat:2 | intcomma }}</p>
-          <p>Console Sale Avg Price: ${{ consolesales.price__avg | floatformat:2 | intcomma }}</p>
-          <p>Earliest Console Sale Sold: {{ consolesales.sold__min }}</p>
-          <p>Earliest Console Sale Created: {{ consolesales.created__min }}</p>
-          {% for console_month in consolesales.months %}
-          {% if console_month.total %}
-          <p>{{ console_month.name }} : ${{ console_month.total | floatformat:2 | intcomma }}</p>
-          {% endif %}
-          {% endfor %}
-        </div>
+    <div class="row mt-2 my-md-5 pb-5">
+      <div class="col-12 col-md-10 offset-md-1">
+        <canvas id="consoles"></canvas>
+      </div>
+    </div>
+    
+    
   </div>
 
 {% endblock content %}
+
+{% block javascript %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.0/Chart.bundle.min.js"></script>
+<script>
+var ctx = document.getElementById("consoles").getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+        labels: [
+          {% for baseconsole in baseconsoles %}
+            "{{ baseconsole.slug }}",
+          {% endfor %}
+        ],
+        datasets: [{
+            label: 'Total $ of sales',
+            data: [
+            {% for num in data %}
+              {{ num | floatformat:0 }},
+            {% endfor %}
+            ],
+            backgroundColor: [
+                'rgb(255, 99, 132)',
+                'rgb(54, 162, 235)',
+                'rgb(255, 206, 86)',
+                'rgb(75, 192, 192)',
+                'rgb(153, 102, 255)',
+                'rgb(255, 159, 64)'
+            ],
+            borderWidth: 1
+        }]
+    },
+});
+</script>
+
+<script>
+var ctx = document.getElementById("months").getContext('2d');
+var myBarChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: [
+          {% for game_month in gamesales.months %}
+          {% if game_month.total %}
+            "{{ game_month.name }}",
+          {% endif %}
+          {% endfor %}
+        ],
+        datasets: [{
+            label: 'Total $ of sales per month',
+            data: [
+            {% for game_month in gamesales.months %}
+            {% if game_month.total %}
+              {{ game_month.total | floatformat:2 }},
+            {% endif %}
+            {% endfor %}
+            ],
+            backgroundColor: [
+                'rgb(255, 99, 132)',
+                'rgb(54, 162, 235)',
+                'rgb(255, 206, 86)',
+                'rgb(75, 192, 192)',
+                'rgb(153, 102, 255)',
+                'rgb(255, 159, 64)'
+            ],
+        }]
+    },
+    
+});
+</script>
+
+{% endblock javascript %}

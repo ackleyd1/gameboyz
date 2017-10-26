@@ -1,7 +1,17 @@
-.summary {
-  background-color: white;
+body {
+  font-family: "Maven Pro", sans-serif;
 }
-.total {
-  margin: 2rem;
-  background-color: #DEFFFC;
+
+@media only screen and (max-width: 576px) {
+  /* xs */
+  .display-3 {
+    font-size: 2.5rem;
+  }
+}
+
+@media only screen and (max-width: 768px) and (min-width: 577px) {
+  /* sm */
+  .display-3 {
+    font-size: 3.5rem;
+  }
 }

@@ -1,0 +1,24 @@
+{% load static %}
+{% load humanize %}
+
+<div class="card">
+  {% if game.image %}
+  <img class="card-img-top" src="{{ game.image.url }}" alt="Card image cap">
+  {% else %}
+  <img class="card-img-top" src="{% static 'core/images/default.png' %}" alt="Card image cap">
+  {% endif %}
+  <div class="card-body">
+    <h4 class="card-title text-center">{{ game }}</h4>
+    {% if not game.image %}
+    <p class="card-text">{{ game.baseconsole}}</p>
+    {% endif %}
+    {% if admin %}
+    <p class="card-text"># of Sales: {{ game.gamesale_set.count }}</p>
+    <p class="card-text">Average price: <span class="cash">${{ game.get_price|floatformat:2|intcomma }}
+    {% endif %}
+    </span></p>
+  </div>
+  <div class="card-footer text-center">
+    <a href="{{ game.get_absolute_url }}" class="card-link">View Listings</a>
+  </div>
+</div>

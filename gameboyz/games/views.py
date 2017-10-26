@@ -7,8 +7,10 @@ from django.views.generic.detail import DetailView, SingleObjectMixin
 from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormMixin
 from django.db.models import Count
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist, MultipleObjectsReturned
+from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector, TrigramSimilarity
+from django.db.models import Q
 
-from gameboyz.core.mixins import UserMixin
+from gameboyz.core.mixins import UserMixin, StaffRequiredMixin
 from gameboyz.consoles.models import BaseConsole
 
 from .models import BaseGame, Game, GameListing, GameListingImage
@@ -24,7 +26,8 @@ if settings.DEBUG:
         private_key=settings.BRAINTREE_PRIVATE_KEY
     )
 
-class GameListView(UserMixin, ListView):
+class GameListView(StaffRequiredMixin, UserMixin, ListView):
+    """Lists games for a particular platform. Restricted to staff for development purposes."""
     model = Game
     template_name = 'games/game_list.html'
     context_object_name = 'games'
@@ -41,10 +44,11 @@ class GameListView(UserMixin, ListView):
         games = games.filter(baseconsole__slug=self.kwargs.get('baseconsole_slug'))
         q = self.request.GET.get('q')
         if q:
-            games = games.filter(basegame__name__icontains=q)
+            games = games.filter(basegame__name__unaccent__icontains=q)
         return games
 
 class GameDetailView(UserMixin, DetailView):
+    """Reveals the games details and current listings """
     model = Game
     template_name = 'games/game.html'
     context_object_name = 'game'
