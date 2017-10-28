@@ -13,28 +13,25 @@ def get_env_variable(var_name):
 
 ROOT_DIR = Path(__file__).ancestor(2)
 
-PROJECT_DIR = ROOT_DIR.child('gameboyz')
-
 SECRET_KEY = get_env_variable("SECRET_KEY")
 EBAY_APP_ID = get_env_variable("EBAY_APP_ID",)
+
+
 
 DEBUG = True
 
 ALLOWED_HOSTS = ['dev.ravedave.co', 'www.dev.ravedave.co']
 
-# Application definition
-
 LOCAL_APPS = [
-    'core',
-    'consoles',
-    'games',
     'accessories',
+    'consoles',
+    'core',
+    'games',
     'sales',
 ]
 
 DJANGO_APPS = [
     'django.contrib.humanize',
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -45,13 +42,13 @@ DJANGO_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
+    'debug_toolbar',
     'django_cleanup',
     'rest_framework',
+    'crispy_forms',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'crispy_forms',
-    'debug_toolbar',
 ]
 
 INSTALLED_APPS = LOCAL_APPS + DJANGO_APPS + THIRD_PARTY_APPS
@@ -98,7 +95,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [PROJECT_DIR.child('templates')],
+        'DIRS': [ROOT_DIR.child('templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -166,10 +163,10 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = 'http://dev.ravedave.co/gameboyz/static/'
-STATIC_ROOT = PROJECT_DIR.child('static')
+STATIC_ROOT = ROOT_DIR.child('static')
 
 MEDIA_URL = 'http://dev.ravedave.co/gameboyz/media/'
-MEDIA_ROOT = PROJECT_DIR.child('media')
+MEDIA_ROOT = ROOT_DIR.child('media')
 
 BROKER_URL = 'redis://localhost:6379/0'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379'
