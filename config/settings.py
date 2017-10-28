@@ -25,11 +25,11 @@ ALLOWED_HOSTS = ['dev.ravedave.co', 'www.dev.ravedave.co']
 # Application definition
 
 LOCAL_APPS = [
-    'gameboyz.core',
-    'gameboyz.consoles',
-    'gameboyz.games',
-    'gameboyz.accessories',
-    'gameboyz.sales',
+    'core',
+    'consoles',
+    'games',
+    'accessories',
+    'sales',
 ]
 
 DJANGO_APPS = [
@@ -51,8 +51,6 @@ THIRD_PARTY_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'crispy_forms',
-    'django_celery_beat',
-    'django_celery_results',
     'debug_toolbar',
 ]
 

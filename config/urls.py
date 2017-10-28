@@ -2,15 +2,15 @@ from django.conf import settings
 from django.conf.urls import url, include
 from django.contrib import admin
 
-from gameboyz.core.views import HomeView, UserCollectionView, BaseConsoleOverviewView
-from gameboyz.games.views import GameListView, GameDetailView, GameListingDetailView, GameListingCreateView, GameListingUpdateView, GameListingDeleteView
-from gameboyz.consoles.views import ConsoleListView
+from core.views import HomeView, UserCollectionView, BaseConsoleOverviewView
+from games.views import GameListView, GameDetailView, GameListingDetailView, GameListingCreateView, GameListingUpdateView, GameListingDeleteView
+from consoles.views import ConsoleListView
 
 urlpatterns = [
     url(r'^$', HomeView.as_view(), name='home'),
-    url(r'^gametitles/', include('gameboyz.games.adminurls', namespace='gametitles')),
-    url(r'^baseconsoles/', include('gameboyz.consoles.adminurls', namespace='baseconsoles')),
-    url(r'sales/', include('gameboyz.sales.adminurls', namespace='sales')),
+    url(r'^gametitles/', include('games.adminurls', namespace='gametitles')),
+    url(r'^baseconsoles/', include('consoles.adminurls', namespace='baseconsoles')),
+    url(r'sales/', include('sales.adminurls', namespace='sales')),
     url(r'^admin/', admin.site.urls),
     url(r'^accounts/', include('allauth.urls')),
     # User urls
