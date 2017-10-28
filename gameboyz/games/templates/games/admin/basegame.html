@@ -4,65 +4,35 @@
 {% block title %}| {{ basegame.name }}{% endblock title %}
 
 {% block content %}
-  <br>
 
-  <div class="container">
-    <h1>{{ basegame.name }}</h1>
-    <p>{{ basegame.summary }}</p>
-    <p>Popularity: {{ basegame.popularity }}</p>
+<div class="container">
+  <h1>{{ basegame.name }}</h1>
+  <p>{{ basegame.summary }}</p>
 
-    {% for keyword in basegame.keywords.all %}
-    <p>{{ keyword }}</p>
+  <p>Franchise: {{ basegame.franchise }}</p>
+
+  {% if request.user.is_superuser %}
+    <p>
+      <a href="{% url 'basegames:update' basegame_pk=basegame.pk %}">Update</a>
+      <a href="{% url 'basegames:delete' basegame_pk=basegame.pk %}">Delete</a>
+    </p>
+  {% endif %}
+
+  <div class="grid">
+    {% for game in basegame.game_set.all %}
+      {% include "games/game_card.html" with game=game admin=True %}
     {% endfor %}
-
-    {% for collection in basegame.collections.all %}
-    <p>{{ collection }}</p>
-    {% endfor %}
-
-    <p>Franchise: {{ basegame.franchise }}</p>
-    <p>Rating: {{ basegame.total_rating }}</p>
-    <p>Rating Count: {{ basegame.total_rating_count }}</p>
-
     {% if request.user.is_superuser %}
-      <p>
-        <a href="{% url 'basegames:update' basegame_pk=basegame.pk %}">Update</a>
-        <a href="{% url 'basegames:delete' basegame_pk=basegame.pk %}">Delete</a>
-      </p>
-    {% endif %}
-
-    <div class="row card-deck">
-      {% for game in basegame.game_set.all %}
-        <div class="col-6 col-sm-4 col-lg-3" style="padding: 1.5rem">
-          <div class="card">
-            {% if game.image %}
-              <img class="card-img-top" style="width: 100%" src="{{ game.image.url }}" alt="{{ game.basegame.name }}">
-            {% else %}
-              <img class="card-img-top" style="width: 100%" src="{% static 'core/images/default.png' %}" alt="Default image">
-            {% endif %}
-            <div class="card-block">
-              <h4 class="card-title text-center">{{ game.basegame.name }}</h4>
-              <p class="card-text">{{ game.baseconsole }}</p>
-            </div>
-            <div class="card-footer text-center">
-              <a href="{% url 'basegames:games-detail' basegame_pk=basegame.pk game_pk=game.pk %}" class="card-link">View More</a>
-            </div>
-          </div>
-        </div>
-      {% endfor %}
-      {% if request.user.is_superuser %}
-      <div class="col-6 col-sm-4 col-lg-3" style="padding: 1.5rem">
-          <div class="card">
-            <img class="card-img-top" style="width: 100%" src="{% static 'core/images/default.png' %}" alt="Default image">
-            <div class="card-block">
-              <h4 class="card-title text-center">Add Another Game</h4>
-              <p class="card-text hidden-md-down"></p>
-            </div>
-            <div class="card-footer text-center">
-              <a href="{% url 'basegames:games-create' basegame_pk=basegame.pk %}" class="card-link">Add</a>
-            </div>
-          </div>
-        </div>
-      {% endif %}
+    <div class="card">
+      <img class="card-img-top" src="{% static 'core/images/default.png' %}" alt="Card image cap">
+      <div class="card-body">
+        <h4 class="card-title text-center">Add a game</h4>
+      </div>
+      <div class="card-footer text-center">
+        <a href="{% url 'basegames:games-create' basegame_pk=basegame.pk %}" class="card-link">Add</a>
+      </div>
     </div>
+    {% endif %}
   </div>
+</div>
 {% endblock content %}

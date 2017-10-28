@@ -1,4 +1,5 @@
 {% extends "core/base.html" %}
+{% load humanize %}
 
 {% block title %}| {{ user }}{% endblock title %}
 
@@ -6,8 +7,10 @@
   <div class="container">
     <h1>{{ user }}</h1>
 
-    {% for gamelisting in user.gamelisting_set.all %}
-      <p>{{ gamelisting }}</p>
+    {% for listing in listings %}
+      <p>{{ listing }} Worth: <span class="cash">${{ listing.game.get_price | floatformat:2 | intcomma }}</span></p>
     {% endfor %}
+
+    <p>Total: <span class="cash">${{ collection_value | floatformat:2 | intcomma }}</p>
   </div>
 {% endblock content %}

@@ -42,15 +42,15 @@ urlpatterns = [
         name='gamelistings-create'
     ),
     url(
-        regex=r'^(?P<baseconsole_slug>[-\w]+)/games/(?P<game_slug>[-\w]+)/(?P<gamelisting_pk>\d+)/$',view=GameListingDetailView.as_view(),
+        regex=r'^(?P<baseconsole_slug>[-\w]+)/games/(?P<game_slug>[-\w]+)/(?P<gamelisting_uuid>[^/]+)/$',view=GameListingDetailView.as_view(),
         name='gamelistings-detail'
     ),
     url(
-        regex=r'^(?P<baseconsole_slug>[-\w]+)/games/(?P<game_slug>[-\w]+)/(?P<gamelisting_pk>\d+)/update/$',view=GameListingUpdateView.as_view(),
+        regex=r'^(?P<baseconsole_slug>[-\w]+)/games/(?P<game_slug>[-\w]+)/(?P<gamelisting_uuid>[^/]+)/update/$',view=GameListingUpdateView.as_view(),
         name='gamelistings-update'
     ),
     url(
-        regex=r'^(?P<baseconsole_slug>[-\w]+)/games/(?P<game_slug>[-\w]+)/(?P<gamelisting_pk>\d+)/delete/$',view=GameListingDeleteView.as_view(),
+        regex=r'^(?P<baseconsole_slug>[-\w]+)/games/(?P<game_slug>[-\w]+)/(?P<gamelisting_uuid>[^/]+)/delete/$',view=GameListingDeleteView.as_view(),
         name='gamelistings-delete'
     ),
     # Console urls

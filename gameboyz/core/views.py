@@ -1,7 +1,7 @@
 from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
 from django.contrib.auth.models import User
-from django.db.models import Count
+from django.db.models import Count, Min, Sum
 
 from gameboyz.consoles.models import BaseConsole, Console
 from gameboyz.games.models import Game, GameListing
@@ -22,7 +22,7 @@ class HomeView(UserMixin, TemplateView):
             games = Game.objects.filter(basegame__name__unaccent__icontains=q)
             if platform and platform != 'all':
                 games = games.filter(baseconsole__slug=platform)
-            context['games']  = games.select_related('basegame').prefetch_related('gamesale_set').select_related('baseconsole').annotate(gamesale_count=Count('gamesale')).order_by('-gamesale_count')
+            context['games']  = games.select_related('basegame').select_related('baseconsole').annotate(gamesale_count=Count('gamesale'), min_price=Min('gamelisting__price')).order_by('-gamesale_count')
         return context
 
 class BaseConsoleOverviewView(StaffRequiredMixin, UserMixin, TemplateView):
@@ -43,3 +43,16 @@ class UserCollectionView(UserMixin, DetailView):
     context_object_name = 'user'
     slug_field = 'username'
     slug_url_kwarg = 'username'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        user = self.get_object()
+        listings = GameListing.objects.filter(user=user).select_related('game__basegame').prefetch_related('game__gamesale_set')
+        value = 0
+        for listing in listings:
+            price = listing.game.get_price()
+            if(price):
+                value += price
+        context['listings'] = listings
+        context['collection_value'] = value
+        return context

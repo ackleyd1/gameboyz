@@ -10,7 +10,7 @@
   <div class="container">
     <h1>{{ gamelisting.game.basegame.name }}</h1>
     {% for gamelistingimage in gamelisting.gamelistingimage_set.all %}
-      <img src="{{ gamelistingimage.image.url }}" alt="{{ gamelistingimage }}">
+      <img src="{{ gamelistingimage.image.url }}" height="400" alt="{{ gamelistingimage }}">
     {% endfor %}
     <p>{{ gamelisting.condition }}</p>
     <p>{{ gamelisting.price }}</p>
@@ -20,8 +20,8 @@
     {% endif %}
     {% if request.user == gamelisting.user %}
     <p>
-      <a href="{% url 'gamelistings-update' baseconsole_slug=view.kwargs.baseconsole_slug game_slug=view.kwargs.game_slug gamelisting_pk=view.kwargs.gamelisting_pk %}">Update</a>
-      <a href="{% url 'gamelistings-delete' baseconsole_slug=view.kwargs.baseconsole_slug game_slug=view.kwargs.game_slug gamelisting_pk=view.kwargs.gamelisting_pk %}">Delete</a>
+      <a href="{{ gamelisting.get_update_url }}">Update</a>
+      <a href="{{ gamelisting.get_delete_url }}">Delete</a>
     </p>
     {% endif %}
     

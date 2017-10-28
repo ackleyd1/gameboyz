@@ -44,7 +44,11 @@
     <h1>LISTINGS</h1>
   </div>
 
-  {% for gamelisting in game.gamelisting_set.all %}
+  <div class="grid">
+    {% for gamelisting in game.gamelisting_set.all %}
+    {% endfor %}
+  </div>
+  
     {% if forloop.first %}<div class="row my-4">
     {% endif %}
     <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">

@@ -99,7 +99,8 @@ class GameListingDisplayView(UserMixin, DetailView):
     model = GameListing
     template_name = 'games/gamelisting.html'
     context_object_name = 'gamelisting'
-    pk_url_kwarg = 'gamelisting_pk'
+    slug_field = 'uuid'
+    slug_url_kwarg = 'gamelisting_uuid'
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -111,7 +112,8 @@ class GameListingSaleView(SingleObjectMixin, FormView):
     model = GameListing
     template_name = 'games/gamelisting.html'
     form_class = BraintreeSaleForm
-    pk_url_kwarg = 'gamelisting_pk'
+    slug_field = 'uuid'
+    slug_url_kwarg = 'gamelisting_uuid'
 
     def form_valid(self, form):
         nonce = form.cleaned_data['payment_method_nonce']
@@ -148,7 +150,8 @@ class GameListingUpdateView(UserMixin, UpdateView):
     model = GameListing
     template_name = 'core/update.html'
     form_class = GameListingUpdateForm
-    pk_url_kwarg = 'gamelisting_pk'
+    slug_field = 'uuid'
+    slug_url_kwarg = 'gamelisting_uuid'
 
     def get_object(self):
         obj = super().get_object()
@@ -158,7 +161,8 @@ class GameListingUpdateView(UserMixin, UpdateView):
 class GameListingDeleteView(UserMixin, DeleteView):
     model = GameListing
     template_name = 'core/delete.html'
-    pk_url_kwarg = 'gamelisting_pk'
+    slug_field = 'uuid'
+    slug_url_kwarg = 'gamelisting_uuid'
 
     def get_object(self):
         obj = super().get_object()
@@ -167,4 +171,3 @@ class GameListingDeleteView(UserMixin, DeleteView):
 
     def get_success_url(self):
         return reverse('games-detail', kwargs={'baseconsole_slug': self.kwargs.get('baseconsole_slug'),'game_slug': self.kwargs.get('game_slug')})
-

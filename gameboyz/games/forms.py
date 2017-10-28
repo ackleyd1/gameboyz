@@ -26,7 +26,7 @@ class GameUpdateForm(forms.ModelForm):
 
     class Meta:
         model = Game
-        fields = ['basegame', 'slug', 'edition', 'baseconsole', 'asin', 'epid', 'image', 'published']
+        fields = ['basegame', 'slug', 'edition', 'baseconsole', 'asin', 'epid', 'image']
 
 class GameListingUpdateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -39,7 +39,7 @@ class GameListingUpdateForm(forms.ModelForm):
         fields = ['price', 'condition']
 
 class GameListingCreateForm(forms.ModelForm):
-    images = forms.ImageField(label='Image of your game', required=False, widget=forms.ClearableFileInput(attrs={'multiple': True}))
+    images = forms.ImageField(label='Images of your game', required=False, widget=forms.ClearableFileInput(attrs={'multiple': True}))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
