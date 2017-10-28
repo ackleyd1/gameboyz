@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from gameboyz.sales.models import GameSale
 
-from .models import BaseGame, Game, Franchise
+from .models import GameTitle, Game, Franchise
 
 class GameSaleInline(admin.StackedInline):
     model = GameSale
@@ -11,6 +11,6 @@ class GameSaleInline(admin.StackedInline):
 class GameAdmin(admin.ModelAdmin):
     inlines = [GameSaleInline]
 
-admin.site.register(BaseGame)
+admin.site.register(GameTitle)
 admin.site.register(Game, GameAdmin)
 admin.site.register(Franchise)

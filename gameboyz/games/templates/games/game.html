@@ -10,9 +10,9 @@
   <div class="row my-4">
     <div class="col-lg-4 col-12 text-center">
       {% if game.image %}
-        <img class="img-fluid" src="{{ game.image.url }}" alt="{{ game.basegame.name }}">
+        <img class="img-fluid" src="{{ game.image.url }}" alt="{{ game.gametitle.name }}">
       {% else %}
-        <img class="img-fluid" src="{% static 'core/images/default.png' %}" alt="Default image">
+        <img class="img-fluid" src="{% static 'core/images/default.jpg' %}" alt="Default image">
       {% endif %}
     </div>
     <div class="col-lg-8 col-12 text-center text-lg-left mt-sm-4 mt-lg-0">
@@ -27,7 +27,7 @@
 
       <p>Estimated price: <span class="cash">${{ game.get_price|floatformat:2|intcomma }}</span></p>
 
-      <p>{{ game.basegame.summary }}</p>
+      <p>{{ game.gametitle.summary }}</p>
 
       {% if request.user.is_authenticated %}
         <p><a class="btn btn-info" href="{% url 'gamelistings-create' baseconsole_slug=view.kwargs.baseconsole_slug game_slug=view.kwargs.game_slug %}">Add to your collection</a></p>
@@ -46,36 +46,9 @@
 
   <div class="grid">
     {% for gamelisting in game.gamelisting_set.all %}
+      {% include "games/gamelisting_card.html" with gamelisting=gamelisting %}
     {% endfor %}
   </div>
-  
-    {% if forloop.first %}<div class="row my-4">
-    {% endif %}
-    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
-      <div class="card">
-        {% if gamelisting.gamelistingimage_set.first %}
-        <img class="card-img-top" src="{{ gamelisting.gamelistingimage_set.first.image.url }}" alt="{{ gamelisting.gamelistingimage_set.first }}">
-        {% else %}
-        <img class="card-img-top" src="{% static 'core/images/default.png' %}" alt="Default image">
-        {% endif %}
-        <div class="card-body">
-          <h4 class="card-title text-center">{{ gamelisting.price }}</h4>
-          <p class="card-text hidden-md-down">{{ gamelisting.user }} | {{ gamelisting.condition }}</p>
-        </div>
-        <div class="card-footer text-center">
-          <a href="{{ gamelisting.get_absolute_url }}" class="card-link">View More</a>
-        </div>
-      </div>
-    </div>
-    {% if forloop.counter|divisibleby:4 %}</div>
-    <div class="row my-4">
-    {% elif forloop.counter|divisibleby:2 %}
-    <div class="w-100 d-block d-lg-none my-4 my-lg-0"></div>
-    {% endif %}
-    {% if forloop.last %}</div>
-    {% endif %}
-    {% endfor %}
-    <div class="row my-4"></div>
 
 </div>
 {% endblock content %}

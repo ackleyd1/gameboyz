@@ -1,21 +1,21 @@
 from django import forms
 from django.apps import apps
 
-BaseGame = apps.get_model('games', 'BaseGame')
+GameTitle = apps.get_model('games', 'GameTitle')
 Game = apps.get_model('games', 'Game')
 GameListing = apps.get_model('games', 'GameListing')
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 
-class BaseGameUpdateForm(forms.ModelForm):
+class GameTitleUpdateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.helper.layout.append(Submit('save', 'Save'))
 
     class Meta:
-        model = BaseGame
+        model = GameTitle
         fields = '__all__'
 
 class GameUpdateForm(forms.ModelForm):
@@ -26,7 +26,7 @@ class GameUpdateForm(forms.ModelForm):
 
     class Meta:
         model = Game
-        fields = ['basegame', 'slug', 'edition', 'baseconsole', 'asin', 'epid', 'image']
+        fields = ['gametitle', 'slug', 'edition', 'baseconsole', 'asin', 'epid', 'image']
 
 class GameListingUpdateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):

@@ -8,7 +8,7 @@ from gameboyz.consoles.views import ConsoleListView
 
 urlpatterns = [
     url(r'^$', HomeView.as_view(), name='home'),
-    url(r'^basegames/', include('gameboyz.games.adminurls', namespace='basegames')),
+    url(r'^gametitles/', include('gameboyz.games.adminurls', namespace='gametitles')),
     url(r'^baseconsoles/', include('gameboyz.consoles.adminurls', namespace='baseconsoles')),
     url(r'sales/', include('gameboyz.sales.adminurls', namespace='sales')),
     url(r'^admin/', admin.site.urls),
@@ -42,15 +42,15 @@ urlpatterns = [
         name='gamelistings-create'
     ),
     url(
-        regex=r'^(?P<baseconsole_slug>[-\w]+)/games/(?P<game_slug>[-\w]+)/(?P<gamelisting_uuid>[^/]+)/$',view=GameListingDetailView.as_view(),
+        regex=r'^(?P<baseconsole_slug>[-\w]+)/games/(?P<game_slug>[-\w]+)/(?P<gamelisting_id>[^/]+)/$',view=GameListingDetailView.as_view(),
         name='gamelistings-detail'
     ),
     url(
-        regex=r'^(?P<baseconsole_slug>[-\w]+)/games/(?P<game_slug>[-\w]+)/(?P<gamelisting_uuid>[^/]+)/update/$',view=GameListingUpdateView.as_view(),
+        regex=r'^(?P<baseconsole_slug>[-\w]+)/games/(?P<game_slug>[-\w]+)/(?P<gamelisting_id>[^/]+)/update/$',view=GameListingUpdateView.as_view(),
         name='gamelistings-update'
     ),
     url(
-        regex=r'^(?P<baseconsole_slug>[-\w]+)/games/(?P<game_slug>[-\w]+)/(?P<gamelisting_uuid>[^/]+)/delete/$',view=GameListingDeleteView.as_view(),
+        regex=r'^(?P<baseconsole_slug>[-\w]+)/games/(?P<game_slug>[-\w]+)/(?P<gamelisting_id>[^/]+)/delete/$',view=GameListingDeleteView.as_view(),
         name='gamelistings-delete'
     ),
     # Console urls

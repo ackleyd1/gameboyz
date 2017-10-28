@@ -55,7 +55,7 @@
 <h2>Accessories<a class="headerlink" href="#accessories" title="Permalink to this headline">¶</a></h2>
 <p>Repo: <a class="reference external" href="https://github.com/ackleyd1/gameboyz/tree/master/gameboyz/accessories">Accessories</a></p>
 <p>This application will handle the accessories that can be bought and sold by the users.</p>
-<p>The Accessory model will be unique in that it does not have a Base model, and may relate to a specific BaseConsole, Console, BaseGame, or Game. It is a unique product with an asin and/or epid.</p>
+<p>The Accessory model will be unique in that it does not have a Base model, and may relate to a specific BaseConsole, Console, GameTitle, or Game. It is a unique product with an asin and/or epid.</p>
 <p>The AccessoryListing model will relate back to the Accessory model and a specific user, as a part of their Collection. It contains information such as the price the user lists it for, the condition of the accessory, images of the accessory, and whether or not it is for sale. It may be listed for sale for others user to purchase and add to their Collection.</p>
 </div>
 <div class="section" id="consoles">
@@ -70,7 +70,7 @@
 <h2>Games<a class="headerlink" href="#games" title="Permalink to this headline">¶</a></h2>
 <p>Repo: <a class="reference external" href="https://github.com/ackleyd1/gameboyz/tree/master/gameboyz/games">Games</a></p>
 <p>This application will handle the games that can be bought and sold by the users.</p>
-<p>The BaseGame model represents a video game that has been created for a BaseConsole, and may have been ported to multiple BaseConsoles. It contains information about that video game such as the name, the summary, a franchise, collections, keywords, etc.</p>
+<p>The GameTitle model represents a video game that has been created for a BaseConsole, and may have been ported to multiple BaseConsoles. It contains information about that video game such as the name, the summary, a franchise, collections, keywords, etc.</p>
 <p>The Game model represents a unique game for a specific console. This allows us to capture variations of the games released such as for a different console, special releases, etc. It is a unique product with an asin and/or epid.</p>
 <p>The GameListing model will relate back to the Game model and a specific user, as a part of their Collection. It contains information such as the price the user lists it for, the condition of the game, images of the game, and whether or not it is for sale. It may be listed for sale for other users to purchase and add to their Collection.</p>
 </div>

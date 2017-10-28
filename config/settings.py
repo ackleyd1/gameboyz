@@ -45,6 +45,7 @@ DJANGO_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
+    'django_cleanup',
     'rest_framework',
     'allauth',
     'allauth.account',

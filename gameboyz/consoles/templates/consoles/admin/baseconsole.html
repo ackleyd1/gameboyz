@@ -17,7 +17,7 @@
             {% if console.image %}
               <img class="card-img-top" style="width: 100%" src="{{ console.image.url }}" alt="{{ baseconsole.name }}">
             {% else %}
-              <img class="card-img-top" style="width: 100%" src="{% static 'core/images/default.png' %}" alt="Default image">
+              <img class="card-img-top" style="width: 100%" src="{% static 'core/images/default.jpg' %}" alt="Default image">
             {% endif %}
             <div class="card-block">
               <h4 class="card-title text-center">{{ console.edition }}</h4>
@@ -32,7 +32,7 @@
       {% if request.user.is_superuser %}
       <div class="col-6 col-sm-4 col-lg-3" style="padding: 1.5rem">
           <div class="card">
-            <img class="card-img-top" style="width: 100%" src="{% static 'core/images/default.png' %}" alt="Default image">
+            <img class="card-img-top" style="width: 100%" src="{% static 'core/images/default.jpg' %}" alt="Default image">
             <div class="card-block">
               <h4 class="card-title text-center">Add Another Console</h4>
               <p class="card-text hidden-md-down"></p>

@@ -2,33 +2,16 @@
 {% load humanize %}
 
 <div class="card">
-  {% if game.image %}
-  <img class="card-img-top" src="{{ game.image.url }}" alt="Card image cap">
+  {% if gamelisting.gamelistingimage_set.first %}
+  <img class="card-img-top" src="{{ gamelisting.gamelistingimage_set.first.image.url }}" alt="{{ gamelisting.gamelistingimage_set.first }}">
   {% else %}
-  <img class="card-img-top" src="{% static 'core/images/default.png' %}" alt="Card image cap">
+  <img class="card-img-top" src="{% static 'core/images/default.jpg' %}" alt="Default image">
   {% endif %}
   <div class="card-body">
-    <h4 class="card-title text-center">{{ game }}</h4>
-    {% if not game.image %}
-    <p class="card-text">{{ game.baseconsole }}</p>
-    {% endif %}
-    {% if admin %}
-    <p class="card-text">{{ game.baseconsole }}</p>
-    <p class="card-text"># of Sales: {{ game.gamesale_set.count }}</p>
-    <p class="card-text">Average price: <span class="cash">${{ game.get_price|floatformat:2|intcomma }}
-    {% else %}
-      {% if game.min_price %}
-    <p class="card-text">Lowest price: <span class="cash">${{ game.min_price }}</span></p>
-      {% else %}
-    <p class="card-text">No available listings</p>
-      {% endif %}
-    {% endif %}
-    </span></p>
+    <h4 class="card-title text-center">{{ gamelisting.price }}</h4>
+    <p class="card-text hidden-md-down">{{ gamelisting.user }} | {{ gamelisting.condition }}</p>
   </div>
   <div class="card-footer text-center">
-    {% if admin %}
-    <a href="{{ game.get_admin_url }}" class="card-link">Admin</a>
-    {% endif %}
-    <a href="{{ game.get_absolute_url }}" class="card-link">View Listings</a>
+    <a href="{{ gamelisting.get_absolute_url }}" class="card-link">View Listing</a>
   </div>
 </div>

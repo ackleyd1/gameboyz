@@ -19,6 +19,36 @@ from gameboyz.core.models import TimeStampedModel
 
 from .utils import image_path_rename, user_game_image_upload
 
+CONDITIONS = (
+    ('new', "Brand New"),
+    ('Complete In Box', (
+            ('cibvgood', 'Very Good'),
+            ('cibgood', 'Good'),
+            ('cibacceptable', 'Acceptable'),
+        )
+    ),
+    ('Loose', (
+            ('loosevgood', 'Very Good'),
+            ('loosegood', 'Good'),
+            ('looseacceptable', 'Acceptable'),
+        )
+    ),
+)
+
+def convert_condition(condition):
+    if condition == "Brand New":
+        return "new"
+    elif condition == "Like New":
+        return "cibvgood"
+    elif condition == "Very Good":
+        return "loosevgood"
+    elif condition == "Good":
+        return "loosegood"
+    elif condition == "Acceptable":
+        return "looseacceptable"
+    else:
+        raise DataError("Hmm condition: %s" % slug)
+
 class Franchise(TimeStampedModel):
     """Model for video game franchises, used to suggest products."""
     name = models.CharField(max_length=128)
@@ -26,7 +56,7 @@ class Franchise(TimeStampedModel):
     def __str__(self):
         return self.name
 
-class BaseGame(TimeStampedModel):
+class GameTitle(TimeStampedModel):
     """Model for a video game title."""
     name = models.CharField(max_length=128)
     url = models.URLField()
@@ -38,7 +68,7 @@ class BaseGame(TimeStampedModel):
 
 class Game(TimeStampedModel):
     """Model that represents a game as a unique product that was released for a specific platform or may be a special edition."""
-    basegame = models.ForeignKey(BaseGame)
+    gametitle = models.ForeignKey(GameTitle)
     slug = models.SlugField(db_index=True, max_length=256, blank=True, unique=True)
     edition = models.CharField(max_length=32, null=True, blank=True)
     baseconsole = models.ForeignKey("consoles.BaseConsole")
@@ -47,13 +77,13 @@ class Game(TimeStampedModel):
     image = models.ImageField(upload_to=image_path_rename, null=True, blank=True)
 
     def __str__(self):
-        return self.basegame.name
+        return self.gametitle.name
 
     def get_absolute_url(self):
         return reverse('games-detail', kwargs={'baseconsole_slug': self.baseconsole.slug, 'game_slug': self.slug})
 
     def get_admin_url(self):
-        return reverse('basegames:games-detail', kwargs={'basegame_pk': self.basegame.pk, 'game_pk': self.pk})
+        return reverse('gametitles:games-detail', kwargs={'gametitle_pk': self.gametitle.pk, 'game_pk': self.pk})
 
     def get_price(self):
         """Returns average price for the game according to game sales, if there are none return None"""
@@ -66,11 +96,11 @@ class Game(TimeStampedModel):
 
     def get_other_games(self):
         """Returns queryset of the game title's other games (another platform or special edition)"""
-        return self.basegame.game_set.all().exclude(id=self.id)
+        return self.gametitle.game_set.all().exclude(id=self.id)
 
     def save(self, *args, **kwargs):
         """Override save method to update unique slug based on the other fields."""
-        slug = self.baseconsole.slug + '-' + slugify(self.basegame.name)
+        slug = self.baseconsole.slug + '-' + slugify(self.gametitle.name)
         if self.edition:
             slug = slug + '-' + slugify(self.edition)
         if Game.objects.filter(slug=slug).exclude(id=self.id).exists():
@@ -80,23 +110,23 @@ class Game(TimeStampedModel):
 
 class GameListing(TimeStampedModel):
     """Model for a game to be listed for sale by a user."""
-    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     user = models.ForeignKey(User)
     game = models.ForeignKey(Game)
     price = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
-    condition = models.CharField(max_length=32)
+    condition = models.CharField(choices=CONDITIONS, max_length=32)
 
     def __str__(self):
-        return "%s - %s" % (self.game.basegame.name, self.condition)
+        return "%s - %s" % (self.game.gametitle.name, self.condition)
 
     def get_absolute_url(self):
-        return reverse('gamelistings-detail', kwargs={'baseconsole_slug': self.game.baseconsole.slug, 'game_slug': self.game.slug, 'gamelisting_uuid': str(self.uuid)})
+        return reverse('gamelistings-detail', kwargs={'baseconsole_slug': self.game.baseconsole.slug, 'game_slug': self.game.slug, 'gamelisting_id': str(self.id)})
 
     def get_update_url(self):
-        return reverse('gamelistings-update', kwargs={'baseconsole_slug': self.game.baseconsole.slug, 'game_slug': self.game.slug, 'gamelisting_uuid': str(self.uuid)})
+        return reverse('gamelistings-update', kwargs={'baseconsole_slug': self.game.baseconsole.slug, 'game_slug': self.game.slug, 'gamelisting_id': str(self.id)})
 
     def get_delete_url(self):
-        return reverse('gamelistings-delete', kwargs={'baseconsole_slug': self.game.baseconsole.slug, 'game_slug': self.game.slug, 'gamelisting_uuid': str(self.uuid)})
+        return reverse('gamelistings-delete', kwargs={'baseconsole_slug': self.game.baseconsole.slug, 'game_slug': self.game.slug, 'gamelisting_id': str(self.id)})
 
 
 

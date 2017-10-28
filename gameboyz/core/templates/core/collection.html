@@ -8,7 +8,7 @@
     <h1>{{ user }}</h1>
 
     {% for listing in listings %}
-      <p>{{ listing }} Worth: <span class="cash">${{ listing.game.get_price | floatformat:2 | intcomma }}</span></p>
+      <p>{{ listing }} Worth: <span class="cash">${{ listing.game.get_price | floatformat:2 | intcomma }}</span> <a href="{{ listing.get_absolute_url }}">Come to me</a></p>
     {% endfor %}
 
     <p>Total: <span class="cash">${{ collection_value | floatformat:2 | intcomma }}</p>

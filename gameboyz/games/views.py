@@ -13,8 +13,8 @@ from django.db.models import Q
 from gameboyz.core.mixins import UserMixin, StaffRequiredMixin
 from gameboyz.consoles.models import BaseConsole
 
-from .models import BaseGame, Game, GameListing, GameListingImage
-from .forms import BaseGameUpdateForm, GameUpdateForm, GameListingUpdateForm, BraintreeSaleForm, GameListingCreateForm
+from .models import GameTitle, Game, GameListing, GameListingImage
+from .forms import GameTitleUpdateForm, GameUpdateForm, GameListingUpdateForm, BraintreeSaleForm, GameListingCreateForm
 
 from django.conf import settings
 
@@ -32,7 +32,7 @@ class GameListView(StaffRequiredMixin, UserMixin, ListView):
     template_name = 'games/game_list.html'
     context_object_name = 'games'
     paginate_by = 20
-    queryset = Game.objects.all().select_related('basegame').prefetch_related('gamesale_set').select_related('baseconsole').annotate(gamesale_count=Count('gamesale')).order_by('-gamesale_count')
+    queryset = Game.objects.all().select_related('gametitle').prefetch_related('gamesale_set').select_related('baseconsole').annotate(gamesale_count=Count('gamesale')).order_by('-gamesale_count')
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -44,7 +44,7 @@ class GameListView(StaffRequiredMixin, UserMixin, ListView):
         games = games.filter(baseconsole__slug=self.kwargs.get('baseconsole_slug'))
         q = self.request.GET.get('q')
         if q:
-            games = games.filter(basegame__name__unaccent__icontains=q)
+            games = games.filter(gametitle__name__unaccent__icontains=q)
         return games
 
 class GameDetailView(UserMixin, DetailView):
@@ -99,8 +99,7 @@ class GameListingDisplayView(UserMixin, DetailView):
     model = GameListing
     template_name = 'games/gamelisting.html'
     context_object_name = 'gamelisting'
-    slug_field = 'uuid'
-    slug_url_kwarg = 'gamelisting_uuid'
+    pk_url_kwarg = 'gamelisting_id'
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -112,8 +111,7 @@ class GameListingSaleView(SingleObjectMixin, FormView):
     model = GameListing
     template_name = 'games/gamelisting.html'
     form_class = BraintreeSaleForm
-    slug_field = 'uuid'
-    slug_url_kwarg = 'gamelisting_uuid'
+    pk_url_kwarg = 'gamelisting_id'
 
     def form_valid(self, form):
         nonce = form.cleaned_data['payment_method_nonce']
@@ -150,8 +148,7 @@ class GameListingUpdateView(UserMixin, UpdateView):
     model = GameListing
     template_name = 'core/update.html'
     form_class = GameListingUpdateForm
-    slug_field = 'uuid'
-    slug_url_kwarg = 'gamelisting_uuid'
+    pk_url_kwarg = 'gamelisting_id'
 
     def get_object(self):
         obj = super().get_object()
@@ -161,8 +158,7 @@ class GameListingUpdateView(UserMixin, UpdateView):
 class GameListingDeleteView(UserMixin, DeleteView):
     model = GameListing
     template_name = 'core/delete.html'
-    slug_field = 'uuid'
-    slug_url_kwarg = 'gamelisting_uuid'
+    pk_url_kwarg = 'gamelisting_id'
 
     def get_object(self):
         obj = super().get_object()

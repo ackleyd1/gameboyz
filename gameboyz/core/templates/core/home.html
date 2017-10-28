@@ -13,7 +13,11 @@
     <p class="lead">Search for video games for sale on our site</p>
 
     <form class="form-inline mt-3 justify-content-center">
+      {% if request.GET.q %}
+      <input type="text" class="form-control" name="q" value="{{ request.GET.q }}">
+      {% else %}
       <input type="text" class="form-control" name="q" placeholder="Search for games...">
+      {% endif %}
       <select name="platform" class="form-control">
         <option value="all" selected>All</option>
         {% for baseconsole in baseconsoles %}
@@ -25,11 +29,19 @@
 
   </div>
 
+{% if request.GET.q %}
+  {% if games.count == 0 %}
+  <div class="row">
+    <p class="display-4 text-muted m-auto">No games found for '{{ request.GET.q }}'</p>
+  </div>
+  {% else %}
   <div class="grid">
     {% for game in games %}
       {% include "games/game_card.html" with game=game admin=False %}
     {% endfor %}
   </div>
+  {% endif %}
+{% endif %}
 
 </div>
 

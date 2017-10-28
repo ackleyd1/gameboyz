@@ -14,7 +14,7 @@ Repo: `Accessories`_
 
 This application will handle the accessories that can be bought and sold by the users.
 
-The Accessory model will be unique in that it does not have a Base model, and may relate to a specific BaseConsole, Console, BaseGame, or Game. It is a unique product with an asin and/or epid.
+The Accessory model will be unique in that it does not have a Base model, and may relate to a specific BaseConsole, Console, GameTitle, or Game. It is a unique product with an asin and/or epid.
 
 The AccessoryListing model will relate back to the Accessory model and a specific user, as a part of their Collection. It contains information such as the price the user lists it for, the condition of the accessory, images of the accessory, and whether or not it is for sale. It may be listed for sale for others user to purchase and add to their Collection.
 
@@ -44,7 +44,7 @@ Repo: `Games`_
 
 This application will handle the games that can be bought and sold by the users.
 
-The BaseGame model represents a video game that has been created for a BaseConsole, and may have been ported to multiple BaseConsoles. It contains information about that video game such as the name, the summary, a franchise, collections, keywords, etc.
+The GameTitle model represents a video game that has been created for a BaseConsole, and may have been ported to multiple BaseConsoles. It contains information about that video game such as the name, the summary, a franchise, collections, keywords, etc.
 
 The Game model represents a unique game for a specific console. This allows us to capture variations of the games released such as for a different console, special releases, etc. It is a unique product with an asin and/or epid.
 

@@ -1,0 +1,38 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}| {{ gametitle.name }}{% endblock title %}
+
+{% block content %}
+
+<div class="container">
+  <h1>{{ gametitle.name }}</h1>
+  <p>{{ gametitle.summary }}</p>
+
+  <p>Franchise: {{ gametitle.franchise }}</p>
+
+  {% if request.user.is_superuser %}
+    <p>
+      <a href="{% url 'gametitles:update' gametitle_pk=gametitle.pk %}">Update</a>
+      <a href="{% url 'gametitles:delete' gametitle_pk=gametitle.pk %}">Delete</a>
+    </p>
+  {% endif %}
+
+  <div class="grid">
+    {% for game in gametitle.game_set.all %}
+      {% include "games/game_card.html" with game=game admin=True %}
+    {% endfor %}
+    {% if request.user.is_superuser %}
+    <div class="card">
+      <img class="card-img-top" src="{% static 'core/images/default.jpg' %}" alt="Card image cap">
+      <div class="card-body">
+        <h4 class="card-title text-center">Add a game</h4>
+      </div>
+      <div class="card-footer text-center">
+        <a href="{% url 'gametitles:games-create' gametitle_pk=gametitle.pk %}" class="card-link">Add</a>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock content %}
