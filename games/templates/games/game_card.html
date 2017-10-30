@@ -10,10 +10,10 @@
   <div class="card-body">
     <h4 class="card-title text-center">{{ game }}</h4>
     {% if not game.image %}
-    <p class="card-text">{{ game.baseconsole }}</p>
+    <p class="card-text">{{ game.platform }}</p>
     {% endif %}
     {% if admin %}
-    <p class="card-text">{{ game.baseconsole }}</p>
+    <p class="card-text">{{ game.platform }}</p>
     <p class="card-text"># of Sales: {{ game.gamesale_set.count }}</p>
     <p class="card-text">Average price: <span class="cash">${{ game.get_price|floatformat:2|intcomma }}
     {% else %}

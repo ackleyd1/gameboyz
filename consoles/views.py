@@ -22,8 +22,8 @@ class ConsoleListView(StaffRequiredMixin, UserMixin, ListView):
 
     def get_queryset(self, *args, **kwargs):
         consoles = super().get_queryset(*args, **kwargs)
-        consoles = consoles.filter(baseconsole__slug=self.kwargs.get('baseconsole_slug'))
+        consoles = consoles.filter(platform__slug=self.kwargs.get('platform_slug'))
         q = self.request.GET.get('q')
         if q:
-            consoles = consoles.filter(baseconsole__name__icontains=q)
+            consoles = consoles.filter(platform__name__icontains=q)
         return consoles

@@ -38,12 +38,12 @@
         <div class="col-6 col-sm-4 col-lg-3" style="padding: 1.5rem">
           <div class="card">
             {% if console.image %}
-              <img class="card-img-top" style="width: 100%" src="{{ console.image.url }}" alt="{{ console.baseconsole.name }}">
+              <img class="card-img-top" style="width: 100%" src="{{ console.image.url }}" alt="{{ console.platform.name }}">
             {% else %}
               <img class="card-img-top" style="width: 100%" src="{% static 'core/images/default.jpg' %}" alt="Default image">
             {% endif %}
             <div class="card-block">
-              <h4 class="card-title text-center">{{ console.baseconsole.name }} - {{ console.edition }}</h4>
+              <h4 class="card-title text-center">{{ console.platform.name }} - {{ console.edition }}</h4>
               <p class="card-text hidden-md-down"></p>
             </div>
             <div class="card-footer text-center">

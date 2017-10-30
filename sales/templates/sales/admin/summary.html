@@ -48,8 +48,8 @@ var myChart = new Chart(ctx, {
     type: 'pie',
     data: {
         labels: [
-          {% for baseconsole in baseconsoles %}
-            "{{ baseconsole.slug }}",
+          {% for platform in platforms %}
+            "{{ platform.slug }}",
           {% endfor %}
         ],
         datasets: [{

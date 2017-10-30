@@ -1,21 +1,21 @@
 {% extends "core/base.html" %}
 {% load static %}
 
-{% block title %}| {{ baseconsole.name }}{% endblock title %}
+{% block title %}| {{ platform.name }}{% endblock title %}
 
 {% block content %}
   <div class="container">
-    <h1>{{ baseconsole.name }}</h1>
+    <h1>{{ platform.name }}</h1>
 
-    <p><a href="{% url 'baseconsoles:update' baseconsole_pk=baseconsole.pk %}">Update this baseconsole</a></p>
-    <p><a href="{% url 'baseconsoles:delete' baseconsole_pk=baseconsole.pk %}">Delete this baseconsole</a></p>
+    <p><a href="{% url 'platforms:update' platform_pk=platform.pk %}">Update this platform</a></p>
+    <p><a href="{% url 'platforms:delete' platform_pk=platform.pk %}">Delete this platform</a></p>
 
     <div class="row card-deck">
-      {% for console in baseconsole.console_set.all %}
+      {% for console in platform.console_set.all %}
         <div class="col-6 col-sm-4 col-lg-3" style="padding: 1.5rem">
           <div class="card">
             {% if console.image %}
-              <img class="card-img-top" style="width: 100%" src="{{ console.image.url }}" alt="{{ baseconsole.name }}">
+              <img class="card-img-top" style="width: 100%" src="{{ console.image.url }}" alt="{{ platform.name }}">
             {% else %}
               <img class="card-img-top" style="width: 100%" src="{% static 'core/images/default.jpg' %}" alt="Default image">
             {% endif %}
@@ -24,7 +24,7 @@
               <p class="card-text hidden-md-down"></p>
             </div>
             <div class="card-footer text-center">
-              <a href="{% url 'baseconsoles:consoles-detail' baseconsole_pk=baseconsole.pk console_pk=console.pk %}" class="card-link">View More</a>
+              <a href="{% url 'platforms:consoles-detail' platform_pk=platform.pk console_pk=console.pk %}" class="card-link">View More</a>
             </div>
           </div>
         </div>
@@ -38,7 +38,7 @@
               <p class="card-text hidden-md-down"></p>
             </div>
             <div class="card-footer text-center">
-              <a href="{% url 'baseconsoles:consoles-create' baseconsole_pk=baseconsole.pk %}" class="card-link">Add</a>
+              <a href="{% url 'platforms:consoles-create' platform_pk=platform.pk %}" class="card-link">Add</a>
             </div>
           </div>
         </div>

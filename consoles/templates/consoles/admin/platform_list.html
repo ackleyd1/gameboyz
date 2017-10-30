@@ -1,12 +1,12 @@
 {% extends "core/base.html" %}
 {% load static %}
 
-{% block title %}| BaseConsoles{% endblock title %}
+{% block title %}| Platforms{% endblock title %}
 
 {% block content %}
   <div class="container">
 
-    <p class="text-center"><a href="{% url 'baseconsoles:create' %}">Create a new one</a></p>
+    <p class="text-center"><a href="{% url 'platforms:create' %}">Create a new one</a></p>
 
     <br>
 
@@ -36,15 +36,15 @@
     {% endif %}
 
     <div class="row card-deck">
-      {% for baseconsole in baseconsoles %}
+      {% for platform in platforms %}
         <div class="col-6 col-sm-4 col-lg-3" style="padding: 1.5rem">
           <div class="card">
             <div class="card-block">
-              <h4 class="card-title text-center">{{ baseconsole.name }}</h4>
+              <h4 class="card-title text-center">{{ platform.name }}</h4>
               <p class="card-text hidden-md-down"></p>
             </div>
             <div class="card-footer text-center">
-              <a href="{% url 'baseconsoles:detail' baseconsole_pk=baseconsole.pk %}" class="card-link">View More</a>
+              <a href="{% url 'platforms:detail' platform_pk=platform.pk %}" class="card-link">View More</a>
             </div>
           </div>
         </div>

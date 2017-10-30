@@ -2,7 +2,7 @@
 {% load static %}
 {% load humanize %}
 
-{% block title %}| {{ console.baseconsole.name }}{% endblock title %}
+{% block title %}| {{ console.platform.name }}{% endblock title %}
 
 {% block content %}
   <div class="container">
@@ -12,20 +12,20 @@
     <div class="row">
       <div class="col-4">
         {% if console.image %}
-          <img class="img-responsive" style="width: 100%" src="{{ console.image.url }}" alt="{{ console.baseconsole.name }}">
+          <img class="img-responsive" style="width: 100%" src="{{ console.image.url }}" alt="{{ console.platform.name }}">
         {% else %}
           <img class="img-responsive" style="width: 100%" src="{% static 'core/images/default.jpg' %}" alt="Default image">
         {% endif %}
       </div>
       <div class="col-8">
 
-        <p>{{ console.baseconsole.name }}</p>
+        <p>{{ console.platform.name }}</p>
 
         <p>{{ console.edition }}</p>
 
         <p>{{ console.slug }}</p>
 
-        <p><a href="{% url 'baseconsoles:detail' baseconsole_pk=console.baseconsole.pk %}">Back to the baseconsole</a></p>
+        <p><a href="{% url 'platforms:detail' platform_pk=console.platform.pk %}">Back to the platform</a></p>
 
         <p>
           <a href="https://amazon.com/dp/{{ console.asin }}" target="_blank"><img height="50" src="{% static 'games/images/amazon_logo.png' %}" alt="Amazon Logo"></a>
@@ -38,8 +38,8 @@
 
         {% if request.user.is_superuser %}
           <p>
-            <a href="{% url 'baseconsoles:consoles-update' baseconsole_pk=console.baseconsole.pk console_pk=console.pk %}">Update</a>
-            <a href="{% url 'baseconsoles:consoles-delete' baseconsole_pk=console.baseconsole.pk console_pk=console.pk %}">Delete</a>
+            <a href="{% url 'platforms:consoles-update' platform_pk=console.platform.pk console_pk=console.pk %}">Update</a>
+            <a href="{% url 'platforms:consoles-delete' platform_pk=console.platform.pk console_pk=console.pk %}">Delete</a>
           </p>
         {% endif %}
 

@@ -16,6 +16,7 @@ from django.contrib.auth.models import User
 from django.db import DataError
 
 from core.models import TimeStampedModel
+from consoles.models import Platform
 
 from .utils import image_path_rename, user_game_image_upload
 
@@ -71,7 +72,7 @@ class Game(TimeStampedModel):
     gametitle = models.ForeignKey(GameTitle)
     slug = models.SlugField(db_index=True, max_length=256, blank=True, unique=True)
     edition = models.CharField(max_length=32, null=True, blank=True)
-    baseconsole = models.ForeignKey("consoles.BaseConsole")
+    platform = models.ForeignKey(Platform)
     asin = models.CharField(max_length=32, null=True, blank=True, unique=True)
     epid = models.CharField(max_length=32, null=True, blank=True, unique=True)
     image = models.ImageField(upload_to=image_path_rename, null=True, blank=True)
@@ -80,7 +81,7 @@ class Game(TimeStampedModel):
         return self.gametitle.name
 
     def get_absolute_url(self):
-        return reverse('games-detail', kwargs={'baseconsole_slug': self.baseconsole.slug, 'game_slug': self.slug})
+        return reverse('games-detail', kwargs={'platform_slug': self.platform.slug, 'game_slug': self.slug})
 
     def get_admin_url(self):
         return reverse('gametitles:games-detail', kwargs={'gametitle_pk': self.gametitle.pk, 'game_pk': self.pk})
@@ -100,7 +101,7 @@ class Game(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         """Override save method to update unique slug based on the other fields."""
-        slug = self.baseconsole.slug + '-' + slugify(self.gametitle.name)
+        slug = self.platform.slug + '-' + slugify(self.gametitle.name)
         if self.edition:
             slug = slug + '-' + slugify(self.edition)
         if Game.objects.filter(slug=slug).exclude(id=self.id).exists():
@@ -120,13 +121,13 @@ class GameListing(TimeStampedModel):
         return "%s - %s" % (self.game.gametitle.name, self.condition)
 
     def get_absolute_url(self):
-        return reverse('gamelistings-detail', kwargs={'baseconsole_slug': self.game.baseconsole.slug, 'game_slug': self.game.slug, 'gamelisting_id': str(self.id)})
+        return reverse('gamelistings-detail', kwargs={'platform_slug': self.game.platform.slug, 'game_slug': self.game.slug, 'gamelisting_id': str(self.id)})
 
     def get_update_url(self):
-        return reverse('gamelistings-update', kwargs={'baseconsole_slug': self.game.baseconsole.slug, 'game_slug': self.game.slug, 'gamelisting_id': str(self.id)})
+        return reverse('gamelistings-update', kwargs={'platform_slug': self.game.platform.slug, 'game_slug': self.game.slug, 'gamelisting_id': str(self.id)})
 
     def get_delete_url(self):
-        return reverse('gamelistings-delete', kwargs={'baseconsole_slug': self.game.baseconsole.slug, 'game_slug': self.game.slug, 'gamelisting_id': str(self.id)})
+        return reverse('gamelistings-delete', kwargs={'platform_slug': self.game.platform.slug, 'game_slug': self.game.slug, 'gamelisting_id': str(self.id)})
 
 
 

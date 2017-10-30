@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 
 from core.models import TimeStampedModel
 
-class BaseConsole(TimeStampedModel):
+class Platform(TimeStampedModel):
     """Stores information on gaming platforms."""
     name = models.CharField(max_length=128)
     slug = models.SlugField(db_index=True, unique=True, max_length=128, blank=True)
@@ -16,14 +16,14 @@ class BaseConsole(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
-        super(BaseConsole, self).save(*args, **kwargs)
+        super(Platform, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
-        return reverse('overview', kwargs={'baseconsole_slug': self.slug})
+        return reverse('overview', kwargs={'platform_slug': self.slug})
 
 class Console(TimeStampedModel):
     """Stores information on Console product releases."""
-    baseconsole = models.ForeignKey(BaseConsole)
+    platform = models.ForeignKey(Platform)
     slug = models.SlugField(db_index=True, max_length=128)
     edition = models.CharField(max_length=32, default="Original")
     asin = models.CharField(max_length=32, null=True, blank=True, unique=True)
@@ -32,11 +32,11 @@ class Console(TimeStampedModel):
     published = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.baseconsole.name) + '-' + slugify(self.edition)
+        self.slug = slugify(self.platform.name) + '-' + slugify(self.edition)
         super(Console, self).save(*args, **kwargs)
 
     def __str__(self):
-        return self.baseconsole.name
+        return self.platform.name
 
 class ConsoleListing(TimeStampedModel):
     user = models.ForeignKey(User)
@@ -45,6 +45,6 @@ class ConsoleListing(TimeStampedModel):
     condition = models.CharField(max_length=32)
 
     def __str__(self):
-        return "%s-%s" %(self.console.baseconsole.name, self.condition)
+        return "%s-%s" %(self.console.platform.name, self.condition)
 
 

@@ -3,7 +3,7 @@ from django.views.generic.detail import DetailView
 from django.contrib.auth.models import User
 from django.db.models import Count, Min, Sum
 
-from consoles.models import BaseConsole, Console
+from consoles.models import Platform, Console
 from games.models import Game, GameListing
 
 from .mixins import UserMixin, StaffRequiredMixin
@@ -15,25 +15,25 @@ class HomeView(UserMixin, TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        context['baseconsoles'] = BaseConsole.objects.all()
+        context['platforms'] = Platform.objects.all()
         q = self.request.GET.get('q')
         platform = self.request.GET.get('platform')
         if q:
             games = Game.objects.filter(gametitle__name__unaccent__icontains=q)
             if platform and platform != 'all':
-                games = games.filter(baseconsole__slug=platform)
-            context['games']  = games.select_related('gametitle').select_related('baseconsole').annotate(gamesale_count=Count('gamesale'), min_price=Min('gamelisting__price')).order_by('-gamesale_count')
+                games = games.filter(platform__slug=platform)
+            context['games']  = games.select_related('gametitle').select_related('platform').annotate(gamesale_count=Count('gamesale'), min_price=Min('gamelisting__price')).order_by('-gamesale_count')
         return context
 
-class BaseConsoleOverviewView(StaffRequiredMixin, UserMixin, TemplateView):
+class PlatformOverviewView(StaffRequiredMixin, UserMixin, TemplateView):
     """View related to a gaming platform. Restricted to staff for development purposes."""
     template_name = 'core/overview.html'
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        context['baseconsole'] = BaseConsole.objects.filter(slug=self.kwargs.get('baseconsole_slug')).first()
-        context['games'] = Game.objects.filter(baseconsole__slug=self.kwargs.get('baseconsole_slug')).select_related('gametitle').prefetch_related('gamesale_set').select_related('baseconsole').annotate(gamesale_count=Count('gamesale')).order_by('-gamesale_count')
-        context['consoles'] = Console.objects.filter(baseconsole__slug=self.kwargs.get('baseconsole_slug')).select_related('baseconsole').prefetch_related('consolesale_set').annotate(consolesale_count=Count('consolesale')).order_by('-consolesale_count')
+        context['platform'] = Platform.objects.filter(slug=self.kwargs.get('platform_slug')).first()
+        context['games'] = Game.objects.filter(platform__slug=self.kwargs.get('platform_slug')).select_related('gametitle').prefetch_related('gamesale_set').select_related('platform').annotate(gamesale_count=Count('gamesale')).order_by('-gamesale_count')
+        context['consoles'] = Console.objects.filter(platform__slug=self.kwargs.get('platform_slug')).select_related('platform').prefetch_related('consolesale_set').annotate(consolesale_count=Count('consolesale')).order_by('-consolesale_count')
         return context
 
 class UserCollectionView(UserMixin, DetailView):

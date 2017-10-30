@@ -64,7 +64,7 @@ class GameTitleDeleteView(StaffRequiredMixin, DeleteView):
 
 class GameCreateView(StaffRequiredMixin, CreateView):
     model = Game
-    fields = ['edition', 'baseconsole', 'asin', 'epid', 'image']
+    fields = ['edition', 'platform', 'asin', 'epid', 'image']
     template_name = 'core/create.html'
 
     def get_success_url(self):

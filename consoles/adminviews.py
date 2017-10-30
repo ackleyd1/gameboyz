@@ -5,47 +5,47 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 from core.mixins import StaffRequiredMixin
 
-from .models import BaseConsole, Console
-from .forms import BaseConsoleUpdateForm, ConsoleCreateForm, ConsoleUpdateForm
+from .models import Platform, Console
+from .forms import PlatformUpdateForm, ConsoleCreateForm, ConsoleUpdateForm
 
 ##########################################################
-# BaseConsole Admin Views (Detail shows List of Consoles)
+# Platform Admin Views (Detail shows List of Consoles)
 ##########################################################
 
-class BaseConsoleListView(StaffRequiredMixin, ListView):
-    model = BaseConsole
-    template_name = 'consoles/admin/baseconsole_list.html'
-    context_object_name = 'baseconsoles'
+class PlatformListView(StaffRequiredMixin, ListView):
+    model = Platform
+    template_name = 'consoles/admin/platform_list.html'
+    context_object_name = 'platforms'
     paginate_by = 20
 
-class BaseConsoleCreateView(StaffRequiredMixin, CreateView):
-    model = BaseConsole
+class PlatformCreateView(StaffRequiredMixin, CreateView):
+    model = Platform
     template_name = 'core/create.html'
     fields = '__all__'
 
     def get_success_url(self):
-      return reverse('baseconsoles:detail', kwargs={'baseconsole_pk': self.object.pk})
+      return reverse('platforms:detail', kwargs={'platform_pk': self.object.pk})
 
-class BaseConsoleDetailView(StaffRequiredMixin, DetailView):
-    model = BaseConsole
-    template_name = 'consoles/admin/baseconsole.html'
-    context_object_name = 'baseconsole'
-    pk_url_kwarg = 'baseconsole_pk'
+class PlatformDetailView(StaffRequiredMixin, DetailView):
+    model = Platform
+    template_name = 'consoles/admin/platform.html'
+    context_object_name = 'platform'
+    pk_url_kwarg = 'platform_pk'
 
-class BaseConsoleUpdateView(StaffRequiredMixin, UpdateView):
-    model = BaseConsole
+class PlatformUpdateView(StaffRequiredMixin, UpdateView):
+    model = Platform
     template_name = 'core/update.html'
-    form_class = BaseConsoleUpdateForm
-    pk_url_kwarg = 'baseconsole_pk'
+    form_class = PlatformUpdateForm
+    pk_url_kwarg = 'platform_pk'
 
     def get_success_url(self):
-        return reverse('baseconsoles:detail', kwargs={'baseconsole_pk': self.object.pk})
+        return reverse('platforms:detail', kwargs={'platform_pk': self.object.pk})
 
-class BaseConsoleDeleteView(StaffRequiredMixin, DeleteView):
-    model = BaseConsole
+class PlatformDeleteView(StaffRequiredMixin, DeleteView):
+    model = Platform
     template_name = 'core/delete.html'
-    success_url = reverse_lazy('baseconsoles:list')
-    pk_url_kwarg = 'baseconsole_pk'
+    success_url = reverse_lazy('platforms:list')
+    pk_url_kwarg = 'platform_pk'
 
 ##########################################################
 # Console Admin Views
@@ -64,7 +64,7 @@ class ConsoleUpdateView(StaffRequiredMixin, UpdateView):
     pk_url_kwarg = 'console_pk'
 
     def get_success_url(self):
-        return reverse('baseconsoles:consoles-detail', kwargs={'baseconsole_pk': self.object.baseconsole.pk, 'console_pk': self.object.pk})
+        return reverse('platforms:consoles-detail', kwargs={'platform_pk': self.object.platform.pk, 'console_pk': self.object.pk})
 
 class ConsoleCreateView(StaffRequiredMixin, CreateView):
     model = Console
@@ -72,11 +72,11 @@ class ConsoleCreateView(StaffRequiredMixin, CreateView):
     template_name = 'core/create.html'
 
     def get_success_url(self):
-        return reverse('baseconsoles:consoles-detail', kwargs={'baseconsole_pk': self.object.baseconsole.pk, 'console_pk': self.object.pk})
+        return reverse('platforms:consoles-detail', kwargs={'platform_pk': self.object.platform.pk, 'console_pk': self.object.pk})
 
     def form_valid(self, form):
         console = form.save(commit=False)
-        console.baseconsole = BaseConsole.objects.get(pk=self.kwargs.get('baseconsole_pk'))
+        console.platform = Platform.objects.get(pk=self.kwargs.get('platform_pk'))
         self.object = console.save()
         return super().form_valid(form)
 
@@ -86,4 +86,4 @@ class ConsoleDeleteView(StaffRequiredMixin, DeleteView):
     pk_url_kwarg = 'console_pk'
 
     def get_success_url(self):
-        return reverse('baseconsoles:detail', kwargs={'baseconsole_pk': self.object.baseconsole.pk})
+        return reverse('platforms:detail', kwargs={'platform_pk': self.object.platform.pk})

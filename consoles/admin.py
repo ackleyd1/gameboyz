@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import BaseConsole, Console
+from .models import Platform, Console
 
-admin.site.register(BaseConsole)
+admin.site.register(Platform)
 admin.site.register(Console)

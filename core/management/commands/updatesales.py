@@ -60,4 +60,4 @@ class Command(BaseCommand):
             except ConnectionError as e:
                 print(e)
                 print(e.response.dict())
-                print(console.baseconsole.name)
+                print(console.platform.name)

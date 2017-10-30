@@ -26,7 +26,7 @@ class GameUpdateForm(forms.ModelForm):
 
     class Meta:
         model = Game
-        fields = ['gametitle', 'slug', 'edition', 'baseconsole', 'asin', 'epid', 'image']
+        fields = ['gametitle', 'slug', 'edition', 'platform', 'asin', 'epid', 'image']
 
 class GameListingUpdateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):

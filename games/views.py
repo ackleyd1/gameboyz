@@ -11,7 +11,7 @@ from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
 from django.db.models import Q
 
 from core.mixins import UserMixin, StaffRequiredMixin
-from consoles.models import BaseConsole
+from consoles.models import Platform
 
 from .models import GameTitle, Game, GameListing, GameListingImage
 from .forms import GameTitleUpdateForm, GameUpdateForm, GameListingUpdateForm, BraintreeSaleForm, GameListingCreateForm
@@ -32,7 +32,7 @@ class GameListView(StaffRequiredMixin, UserMixin, ListView):
     template_name = 'games/game_list.html'
     context_object_name = 'games'
     paginate_by = 20
-    queryset = Game.objects.all().select_related('gametitle').prefetch_related('gamesale_set').select_related('baseconsole').annotate(gamesale_count=Count('gamesale')).order_by('-gamesale_count')
+    queryset = Game.objects.all().select_related('gametitle').prefetch_related('gamesale_set').select_related('platform').annotate(gamesale_count=Count('gamesale')).order_by('-gamesale_count')
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -41,7 +41,7 @@ class GameListView(StaffRequiredMixin, UserMixin, ListView):
 
     def get_queryset(self, *args, **kwargs):
         games = super().get_queryset(*args, **kwargs)
-        games = games.filter(baseconsole__slug=self.kwargs.get('baseconsole_slug'))
+        games = games.filter(platform__slug=self.kwargs.get('platform_slug'))
         q = self.request.GET.get('q')
         if q:
             games = games.filter(gametitle__name__unaccent__icontains=q)
@@ -54,7 +54,7 @@ class GameDetailView(UserMixin, DetailView):
     context_object_name = 'game'
 
     def get_object(self):
-        queryset = Game.objects.filter(baseconsole__slug=self.kwargs.get('baseconsole_slug'), slug=self.kwargs.get('game_slug'))
+        queryset = Game.objects.filter(platform__slug=self.kwargs.get('platform_slug'), slug=self.kwargs.get('game_slug'))
         if not queryset.exists():
             raise ObjectDoesNotExist
         if queryset.count() > 1:
@@ -82,7 +82,7 @@ class GameListingCreateView(CreateView):
 
     def form_valid(self, form, images):
         gamelisting = form.save(commit=False)
-        queryset = Game.objects.filter(baseconsole__slug=self.kwargs.get('baseconsole_slug'), slug=self.kwargs.get('game_slug'))
+        queryset = Game.objects.filter(platform__slug=self.kwargs.get('platform_slug'), slug=self.kwargs.get('game_slug'))
         if not queryset.exists():
             raise ObjectDoesNotExist
         if queryset.count() > 1:
@@ -131,7 +131,7 @@ class GameListingSaleView(SingleObjectMixin, FormView):
             return super().form_invalid(form)
 
     def get_success_url(self):
-        return reverse('games-detail', kwargs={'baseconsole_slug': self.kwargs.get('baseconsole_slug'),'game_slug': self.kwargs.get('game_slug')})
+        return reverse('games-detail', kwargs={'platform_slug': self.kwargs.get('platform_slug'),'game_slug': self.kwargs.get('game_slug')})
 
 class GameListingDetailView(View):
     def get(self, request, *args, **kwargs):
@@ -166,4 +166,4 @@ class GameListingDeleteView(UserMixin, DeleteView):
             raise PermissionDenied
 
     def get_success_url(self):
-        return reverse('games-detail', kwargs={'baseconsole_slug': self.kwargs.get('baseconsole_slug'),'game_slug': self.kwargs.get('game_slug')})
+        return reverse('games-detail', kwargs={'platform_slug': self.kwargs.get('platform_slug'),'game_slug': self.kwargs.get('game_slug')})
