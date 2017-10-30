@@ -4,9 +4,8 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 from core.mixins import StaffRequiredMixin
-
-from .models import Platform, Console
-from .forms import PlatformUpdateForm, ConsoleCreateForm, ConsoleUpdateForm
+from consoles.models import Platform, Console
+from consoles.forms import PlatformUpdateForm, ConsoleCreateForm, ConsoleUpdateForm
 
 ##########################################################
 # Platform Admin Views (Detail shows List of Consoles)

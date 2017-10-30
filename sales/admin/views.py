@@ -1,14 +1,13 @@
-from datetime import date
-
 from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.db.models import Avg, Count, Sum, Min, Sum
 
 from core.mixins import StaffRequiredMixin
-
 from games.models import Game
 from consoles.models import Console, Platform
-from .models import GameSale, ConsoleSale
+from sales.models import GameSale, ConsoleSale
+
+from datetime import date
 
 MONTHS = {
     'January' : 1,

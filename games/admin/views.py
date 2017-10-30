@@ -2,10 +2,10 @@ from django.core.urlresolvers import reverse, reverse_lazy
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from core.mixins import StaffRequiredMixin
 
-from .models import GameTitle, Game
-from .forms import GameTitleUpdateForm, GameUpdateForm
+from core.mixins import StaffRequiredMixin
+from games.models import GameTitle, Game
+from games.forms import GameTitleUpdateForm, GameUpdateForm
 
 ##########################################################
 # GameTitle Admin Views (Detail shows list of Games)

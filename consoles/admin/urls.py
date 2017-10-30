@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from .adminviews import PlatformListView, PlatformCreateView, PlatformDetailView, PlatformUpdateView, PlatformDeleteView, ConsoleCreateView, ConsoleDetailView, ConsoleUpdateView, ConsoleDeleteView
+from .views import PlatformListView, PlatformCreateView, PlatformDetailView, PlatformUpdateView, PlatformDeleteView, ConsoleCreateView, ConsoleDetailView, ConsoleUpdateView, ConsoleDeleteView
 
 urlpatterns = [
     url(r'^$', PlatformListView.as_view(), name='list'),

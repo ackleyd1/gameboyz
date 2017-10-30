@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from .adminviews import GameTitleListView, GameTitleCreateView, GameTitleDetailView, GameTitleUpdateView, GameTitleDeleteView, GameCreateView, GameDetailView, GameUpdateView, GameDeleteView
+from .views import GameTitleListView, GameTitleCreateView, GameTitleDetailView, GameTitleUpdateView, GameTitleDeleteView, GameCreateView, GameDetailView, GameUpdateView, GameDeleteView
 
 urlpatterns = [
     url(r'^$', GameTitleListView.as_view(), name='list'),
