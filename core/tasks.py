@@ -21,9 +21,7 @@ logger = get_task_logger(__name__)
     name="updatesales",
 )
 def updatesales():
-    """
-    Celery task that loops through our games and uses the ebay finding API: https://developer.ebay.com/devzone/finding/callref/findCompletedItems.html and the ebay python SDK: https://github.com/timotheus/ebaysdk-python/ to gather sales data
-    """
+    """Celery task that loops through our games and gathers pricing info"""
     count = 0
     for game in Game.objects.all():
         try:
@@ -32,13 +30,14 @@ def updatesales():
             if response.reply.ack == 'Success' and 'item' in response.dict()['searchResult'].keys():
                 for item in response.dict()['searchResult']['item']:
                     if 'productId' in item.keys():
-                        if game.epid == item['productId']['value'] and not GameSale.objects.filter(url=item['viewItemURL']).exists() and item['sellingStatus']['sellingState'] == "EndedWithSales" and item['sellingStatus']['convertedCurrentPrice']["_currencyId"] == "USD" and item['country'] == 'US':
+                        url = item['viewItemURL']
+                        if game.epid == item['productId']['value'] and not GameSale.objects.filter(url=url).exists() and item['sellingStatus']['sellingState'] == "EndedWithSales" and item['sellingStatus']['convertedCurrentPrice']["_currencyId"] == "USD" and item['country'] == 'US':
                             GameSale.objects.create(
                                 title=item['title'],
                                 game=game,
                                 country=item['country'],
                                 location=item['location'],
-                                url=item['viewItemURL'],
+                                url=url,
                                 condition=item['condition']['conditionDisplayName'],
                                 price=item['sellingStatus']['convertedCurrentPrice']['value'],
                                 sold=dateutil.parser.parse(item['listingInfo']['endTime'])

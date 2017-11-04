@@ -11,16 +11,14 @@ def get_env_variable(var_name):
         error_msg = 'Set the {} environment variable'.format(var_name)
         raise ImproperlyConfigured(error_msg)
 
-ROOT_DIR = Path(__file__).ancestor(2)
-
-SECRET_KEY = get_env_variable("SECRET_KEY")
-EBAY_APP_ID = get_env_variable("EBAY_APP_ID",)
-
-
-
-DEBUG = True
+ROOT_DIR = Path(__file__).ancestor(3)
 
 ALLOWED_HOSTS = ['dev.ravedave.co', 'www.dev.ravedave.co']
+
+SECRET_KEY = get_env_variable("SECRET_KEY")
+EBAY_APP_ID = get_env_variable("EBAY_APP_ID")
+
+DEBUG = True
 
 LOCAL_APPS = [
     'accessories',
@@ -55,16 +53,11 @@ INSTALLED_APPS = LOCAL_APPS + DJANGO_APPS + THIRD_PARTY_APPS
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
-LOGIN_REDIRECT_URL = '/gameboyz'
-LOGIN_URL = '/gameboyz'
-ACCOUNT_LOGOUT_REDIRECT_URL = '/gameboyz'
-
 SITE_ID = 1
 
 ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_PRESERVE_USERNAME_CASING = False
-ACCOUNT_SIGNUP_EMAIL_ENTER_TWICE = True
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 7
 ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_EMAIL_REQUIRED = True
@@ -159,13 +152,7 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = False
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.11/howto/static-files/
-
-STATIC_URL = 'http://dev.ravedave.co/gameboyz/static/'
 STATIC_ROOT = ROOT_DIR.child('static')
-
-MEDIA_URL = 'http://dev.ravedave.co/gameboyz/media/'
 MEDIA_ROOT = ROOT_DIR.child('media')
 
 BROKER_URL = 'redis://localhost:6379/0'
@@ -173,6 +160,15 @@ CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+
+LOGIN_REDIRECT_URL = '/gameboyz'
+LOGIN_URL = '/gameboyz'
+ACCOUNT_LOGOUT_REDIRECT_URL = '/gameboyz'
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/1.11/howto/static-files/
+STATIC_URL = 'http://dev.ravedave.co/gameboyz/static/'
+MEDIA_URL = 'http://dev.ravedave.co/gameboyz/media/'
 
 BRAINTREE_MERCHANT_ID = get_env_variable("BRAINTREE_MERCHANT_ID")
 BRAINTREE_PUBLIC_KEY = get_env_variable("BRAINTREE_PUBLIC_KEY")
@@ -184,5 +180,5 @@ def show_toolbar(request):
     return False
 
 DEBUG_TOOLBAR_CONFIG = {
-    'SHOW_TOOLBAR_CALLBACK': 'config.settings.show_toolbar',
+    'SHOW_TOOLBAR_CALLBACK': 'config.settings.base.show_toolbar',
 }
