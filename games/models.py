@@ -1,7 +1,6 @@
 """
-Contains models for our game app:
+Contains models for our games app:
 Franchise
-GameTitle
 Game
 GameListing
 GameListingImage
@@ -18,23 +17,7 @@ from django.db import DataError
 from core.models import TimeStampedModel
 from consoles.models import Platform
 
-from .utils import image_path_rename, user_game_image_upload
-
-CONDITIONS = (
-    ('new', "Brand New"),
-    ('Complete In Box', (
-            ('cibvgood', 'Very Good'),
-            ('cibgood', 'Good'),
-            ('cibacceptable', 'Acceptable'),
-        )
-    ),
-    ('Loose', (
-            ('loosevgood', 'Very Good'),
-            ('loosegood', 'Good'),
-            ('looseacceptable', 'Acceptable'),
-        )
-    ),
-)
+from .utils import image_path_rename, user_game_image_upload, CONDITIONS
 
 class Franchise(TimeStampedModel):
     """Model for video game franchises, used to suggest products."""
@@ -43,19 +26,13 @@ class Franchise(TimeStampedModel):
     def __str__(self):
         return self.name
 
-class GameTitle(TimeStampedModel):
-    """Model for a video game title."""
+class Game(TimeStampedModel):
+    """Model that represents a Game released for a platform."""
     name = models.CharField(max_length=128)
     url = models.URLField()
-    summary = models.TextField(null=True, blank=True)
     franchise = models.ForeignKey(Franchise, null=True, blank=True, on_delete=models.SET_NULL)
-
-    def __str__(self):
-        return self.name
-
-class Game(TimeStampedModel):
-    """Model that represents a game as a unique product that was released for a specific platform or may be a special edition."""
-    gametitle = models.ForeignKey(GameTitle)
+    related_games = models.ManyToManyField('self', blank=True)
+    summary = models.TextField(null=True, blank=True)
     slug = models.SlugField(db_index=True, max_length=256, blank=True, unique=True)
     edition = models.CharField(max_length=32, null=True, blank=True)
     platform = models.ForeignKey(Platform)
@@ -64,13 +41,13 @@ class Game(TimeStampedModel):
     image = models.ImageField(upload_to=image_path_rename, null=True, blank=True)
 
     def __str__(self):
-        return self.gametitle.name
+        return self.name
 
     def get_absolute_url(self):
         return reverse('games-detail', kwargs={'platform_slug': self.platform.slug, 'game_slug': self.slug})
 
     def get_admin_url(self):
-        return reverse('gametitles:games-detail', kwargs={'gametitle_pk': self.gametitle.pk, 'game_pk': self.pk})
+        return reverse('games-admin:games-detail', kwargs={'game_pk': self.pk})
 
     def get_price(self):
         """Returns average price for the game according to game sales, if there are none return None"""
@@ -81,18 +58,13 @@ class Game(TimeStampedModel):
             sum += sale.price
         return sum / self.gamesale_set.count()
 
-    def get_other_games(self):
-        """Returns queryset of the game title's other games (another platform or special edition)"""
-        return self.gametitle.game_set.all().exclude(id=self.id)
-
     def save(self, *args, **kwargs):
         """Override save method to update unique slug based on the other fields."""
-        slug = self.platform.slug + '-' + slugify(self.gametitle.name)
+        slug = self.platform.slug + '-' + slugify(self.name)
         if self.edition:
             slug = slug + '-' + slugify(self.edition)
         if Game.objects.filter(slug=slug).exclude(id=self.id).exists():
             raise DataError('Game with slug %s already exists' % slug)
-        self.slug = slug
         super().save(*args, **kwargs)
 
 class GameListing(TimeStampedModel):
@@ -104,18 +76,10 @@ class GameListing(TimeStampedModel):
     condition = models.CharField(choices=CONDITIONS, max_length=32)
 
     def __str__(self):
-        return "%s - %s" % (self.game.gametitle.name, self.condition)
+        return "%s - %s" % (self.game.name, self.condition)
 
     def get_absolute_url(self):
         return reverse('gamelistings-detail', kwargs={'platform_slug': self.game.platform.slug, 'game_slug': self.game.slug, 'gamelisting_id': str(self.id)})
-
-    def get_update_url(self):
-        return reverse('gamelistings-update', kwargs={'platform_slug': self.game.platform.slug, 'game_slug': self.game.slug, 'gamelisting_id': str(self.id)})
-
-    def get_delete_url(self):
-        return reverse('gamelistings-delete', kwargs={'platform_slug': self.game.platform.slug, 'game_slug': self.game.slug, 'gamelisting_id': str(self.id)})
-
-
 
 class GameListingImage(TimeStampedModel):
     """Model for users to upload images of the game they are listing for sale."""

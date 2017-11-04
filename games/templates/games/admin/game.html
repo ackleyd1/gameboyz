@@ -18,22 +18,20 @@
     <div class="row">
       <div class="col-4">
         {% if game.image %}
-          <img class="img-responsive" style="width: 100%" src="{{ game.image.url }}" alt="{{ game.gametitle.name }}">
+          <img class="img-responsive" style="width: 100%" src="{{ game.image.url }}" alt="{{ game.name }}">
         {% else %}
           <img class="img-responsive" style="width: 100%" src="{% static 'core/images/default.jpg' %}" alt="Default image">
         {% endif %}
       </div>
       <div class="col-8">
 
-        <p>{{ game.gametitle.name }}</p>
+        <p>{{ game.name }}</p>
 
         <p>{{ game.platform }}</p>
 
         <p>{{ game.slug }}</p>
 
-        <p>{{ game.gametitle.summary }}</p>
-
-        <p><a href="{% url 'gametitles:detail' gametitle_pk=game.gametitle.pk %}">Back to the gametitle</a></p>
+        <p>{{ game.summary }}</p>
 
         <p>
           <a href="https://amazon.com/dp/{{ game.asin }}" target="_blank"><img height="50" src="{% static 'games/images/amazon_logo.png' %}" alt="Amazon Logo"></a>
@@ -50,8 +48,8 @@
 
         {% if request.user.is_superuser %}
           <p>
-            <a href="{% url 'gametitles:games-update' gametitle_pk=game.gametitle.pk game_pk=game.pk %}">Update</a>
-            <a href="{% url 'gametitles:games-delete' gametitle_pk=game.gametitle.pk game_pk=game.pk %}">Delete</a>
+            <a href="{{ game.get_admin_url }}/update/">Update</a>
+            <a href="{{ game.get_admin_url }}/delete/">Delete</a>
           </p>
         {% endif %}
 

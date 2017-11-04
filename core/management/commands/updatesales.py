@@ -37,7 +37,7 @@ class Command(BaseCommand):
             except ConnectionError as e:
                 print(e)
                 print(e.response.dict())
-                print(game.gametitle.name)
+                print(game.name)
         for console in Console.objects.all():
             try:
               api = Connection(appid=settings.EBAY_APP_ID, config_file=None)

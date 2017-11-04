@@ -19,10 +19,10 @@ class HomeView(UserMixin, TemplateView):
         q = self.request.GET.get('q')
         platform = self.request.GET.get('platform')
         if q:
-            games = Game.objects.filter(gametitle__name__unaccent__icontains=q)
+            games = Game.objects.filter(name__unaccent__icontains=q)
             if platform and platform != 'all':
                 games = games.filter(platform__slug=platform)
-            context['games']  = games.select_related('gametitle').select_related('platform').annotate(gamesale_count=Count('gamesale'), min_price=Min('gamelisting__price')).order_by('-gamesale_count')
+            context['games']  = games.select_related('platform').annotate(gamesale_count=Count('gamesale'), min_price=Min('gamelisting__price')).order_by('-gamesale_count')
         return context
 
 class PlatformOverviewView(StaffRequiredMixin, UserMixin, TemplateView):
@@ -32,7 +32,7 @@ class PlatformOverviewView(StaffRequiredMixin, UserMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context['platform'] = Platform.objects.filter(slug=self.kwargs.get('platform_slug')).first()
-        context['games'] = Game.objects.filter(platform__slug=self.kwargs.get('platform_slug')).select_related('gametitle').prefetch_related('gamesale_set').select_related('platform').annotate(gamesale_count=Count('gamesale')).order_by('-gamesale_count')
+        context['games'] = Game.objects.filter(platform__slug=self.kwargs.get('platform_slug')).prefetch_related('gamesale_set').select_related('platform').annotate(gamesale_count=Count('gamesale')).order_by('-gamesale_count')
         context['consoles'] = Console.objects.filter(platform__slug=self.kwargs.get('platform_slug')).select_related('platform').prefetch_related('consolesale_set').annotate(consolesale_count=Count('consolesale')).order_by('-consolesale_count')
         return context
 
@@ -47,7 +47,7 @@ class UserCollectionView(UserMixin, DetailView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         user = self.get_object()
-        listings = GameListing.objects.filter(user=user).select_related('game__gametitle').prefetch_related('game__gamesale_set')
+        listings = GameListing.objects.filter(user=user).prefetch_related('game__gamesale_set')
         value = 0
         for listing in listings:
             price = listing.game.get_price()

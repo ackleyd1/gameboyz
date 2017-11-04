@@ -1,7 +1,7 @@
 {% extends "core/base.html" %}
 {% load static %}
 
-{% block title %}| GameTitles{% endblock title %}
+{% block title %}| Games{% endblock title %}
 
 {% block content %}
 
@@ -82,18 +82,8 @@
   </div>
   {% endif %}
 
-  {% for gametitle in gametitles %}
-  {% if forloop.first %}<div class="card-deck my-4">{% endif %}
-  <div class="card">
-    <div class="card-body">
-      <h4 class="card-title text-center">{{ gametitle.name }}</h4>
-    </div>
-    <div class="card-footer text-center">
-      <a href="{% url 'gametitles:detail' gametitle_pk=gametitle.pk %}" class="card-link">View More</a>
-    </div>
-  </div>
-  {% if forloop.counter|divisibleby:4 %}</div><div class="card-deck my-4">{% endif %}
-  {% if forloop.last %}</div>{% endif %}
+  {% for game in games %}
+    {% include 'games/game_card.html' admin=True %}
   {% endfor %}
 
 

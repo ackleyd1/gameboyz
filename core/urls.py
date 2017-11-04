@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.conf.urls import url, include
-from django.contrib import admin
 
 from .views import HomeView, UserCollectionView, PlatformOverviewView
 from games.views import GameListView, GameDetailView, GameListingDetailView, GameListingCreateView, GameListingUpdateView, GameListingDeleteView
@@ -8,10 +7,9 @@ from consoles.views import ConsoleListView
 
 urlpatterns = [
     url(r'^$', HomeView.as_view(), name='home'),
-    url(r'^gametitles/', include('games.admin.urls', namespace='gametitles')),
+    url(r'^admin/', include('games.admin.urls', namespace='games-admin')),
     url(r'^platforms/', include('consoles.admin.urls', namespace='platforms')),
     url(r'sales/', include('sales.admin.urls', namespace='sales')),
-    url(r'^admin/', admin.site.urls),
     url(r'^accounts/', include('allauth.urls')),
     # User urls
     url(

@@ -13,8 +13,8 @@ from django.db.models import Q
 from core.mixins import UserMixin, StaffRequiredMixin
 from consoles.models import Platform
 
-from .models import GameTitle, Game, GameListing, GameListingImage
-from .forms import GameTitleUpdateForm, GameUpdateForm, GameListingUpdateForm, BraintreeSaleForm, GameListingCreateForm
+from .models import Game, GameListing, GameListingImage
+from .forms import GameUpdateForm, GameListingUpdateForm, BraintreeSaleForm, GameListingCreateForm
 
 from django.conf import settings
 
@@ -32,7 +32,7 @@ class GameListView(StaffRequiredMixin, UserMixin, ListView):
     template_name = 'games/game_list.html'
     context_object_name = 'games'
     paginate_by = 20
-    queryset = Game.objects.all().select_related('gametitle').prefetch_related('gamesale_set').select_related('platform').annotate(gamesale_count=Count('gamesale')).order_by('-gamesale_count')
+    queryset = Game.objects.all().prefetch_related('gamesale_set').select_related('platform').annotate(gamesale_count=Count('gamesale')).order_by('-gamesale_count')
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -44,7 +44,7 @@ class GameListView(StaffRequiredMixin, UserMixin, ListView):
         games = games.filter(platform__slug=self.kwargs.get('platform_slug'))
         q = self.request.GET.get('q')
         if q:
-            games = games.filter(gametitle__name__unaccent__icontains=q)
+            games = games.filter(name__unaccent__icontains=q)
         return games
 
 class GameDetailView(UserMixin, DetailView):

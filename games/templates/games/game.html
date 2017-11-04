@@ -10,7 +10,7 @@
   <div class="row my-4">
     <div class="col-lg-4 col-12 text-center">
       {% if game.image %}
-        <img class="img-fluid" src="{{ game.image.url }}" alt="{{ game.gametitle.name }}">
+        <img class="img-fluid" src="{{ game.image.url }}" alt="{{ game.name }}">
       {% else %}
         <img class="img-fluid" src="{% static 'core/images/default.jpg' %}" alt="Default image">
       {% endif %}
@@ -27,7 +27,7 @@
 
       <p>Estimated price: <span class="cash">${{ game.get_price|floatformat:2|intcomma }}</span></p>
 
-      <p>{{ game.gametitle.summary }}</p>
+      <p>{{ game.summary }}</p>
 
       {% if request.user.is_authenticated %}
         <p><a class="btn btn-info" href="{% url 'gamelistings-create' platform_slug=view.kwargs.platform_slug game_slug=view.kwargs.game_slug %}">Add to your collection</a></p>

@@ -8,7 +8,7 @@
 
 {% block content %}
   <div class="container">
-    <h1>{{ gamelisting.game.gametitle.name }}</h1>
+    <h1>{{ gamelisting.game.name }}</h1>
     {% for gamelistingimage in gamelisting.gamelistingimage_set.all %}
       <img src="{{ gamelistingimage.image.url }}" height="400" alt="{{ gamelistingimage }}">
     {% endfor %}
@@ -30,7 +30,7 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="BuyModal">Buy {{ gamelisting.game.gametitle.name }}</h5>
+            <h5 class="modal-title" id="BuyModal">Buy {{ gamelisting.game.name }}</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
