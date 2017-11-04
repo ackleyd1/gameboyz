@@ -36,20 +36,6 @@ CONDITIONS = (
     ),
 )
 
-def convert_condition(condition):
-    if condition == "Brand New":
-        return "new"
-    elif condition == "Like New":
-        return "cibvgood"
-    elif condition == "Very Good":
-        return "loosevgood"
-    elif condition == "Good":
-        return "loosegood"
-    elif condition == "Acceptable":
-        return "looseacceptable"
-    else:
-        raise DataError("Hmm condition: %s" % slug)
-
 class Franchise(TimeStampedModel):
     """Model for video game franchises, used to suggest products."""
     name = models.CharField(max_length=128)
